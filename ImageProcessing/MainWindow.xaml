@@ -1,0 +1,61 @@
+﻿<Window x:Class="ImageProcessing.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageProcessing"
+        mc:Ignorable="d"
+        Title="Image Processing" Height="550" Width="800" ResizeMode="CanMinimize">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="New" Click="OnMenuCreateNewClick"/>
+                <MenuItem Header="Open" Click="OnMenuOpenFileClick"/>
+                <MenuItem Header="Save" Click="OnMenuSaveFileClick"/>
+                <Separator />
+                <MenuItem Header="Exit" Click="OnMenuExitClick" />
+            </MenuItem>
+        </Menu>
+        <TabControl>
+            <TabItem Header="workspace">
+                <Grid>
+                    <Button Name="btnPerform" Click="OnBtnPerformClick" Content="Perform Task" HorizontalAlignment="Center" Margin="0,419,0,0" VerticalAlignment="Top" Height="35" Width="140">
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFB3FFA7" />
+                        </Button.Background>
+                    </Button>
+
+                    <StackPanel x:Name="pnlWorkSpaceImage" Margin="10,10,397,61">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">
+                            <Canvas x:Name="imageCanvas" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}">
+                                <Canvas.Background>
+                                    <VisualBrush Stretch="None">
+                                        <VisualBrush.Visual>
+                                            <Image x:Name="workSpaceImage" Source="pack://application:,,,/img/test.png" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Canvas.Background>
+                            </Canvas>
+                        </ScrollViewer>
+                    </StackPanel>
+                    <StackPanel x:Name="pnlWorkSpaceImage_original" Margin="397,10,10,61">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">
+                            <Canvas x:Name="imageCanvas_original" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}" >
+                                <Canvas.Background>
+                                    <VisualBrush Stretch="None">
+                                        <VisualBrush.Visual>
+                                            <Image x:Name="workSpaceImage_original" Source="/img/test.png" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Canvas.Background>
+                            </Canvas>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="empty">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
