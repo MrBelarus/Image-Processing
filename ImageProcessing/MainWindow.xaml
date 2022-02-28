@@ -31,7 +31,7 @@
                                 <Canvas.Background>
                                     <VisualBrush Stretch="None">
                                         <VisualBrush.Visual>
-                                            <Image x:Name="workSpaceImage" Source="pack://application:,,,/Resources/Images/test.png" />
+                                            <Image x:Name="workSpaceImage" />
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Canvas.Background>
@@ -44,7 +44,7 @@
                                 <Canvas.Background>
                                     <VisualBrush Stretch="None">
                                         <VisualBrush.Visual>
-                                            <Image x:Name="workSpaceImage_original" Source="pack://application:,,,/Resources/Images/test.png" />
+                                            <Image x:Name="workSpaceImage_original" />
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Canvas.Background>

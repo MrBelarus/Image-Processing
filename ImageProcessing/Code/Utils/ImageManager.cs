@@ -48,7 +48,7 @@ namespace ImageProcessing.Utils {
         public static Tuple<byte[], int> BitmapToBytes(Bitmap bmp, PixelFormat format = PixelFormat.Format32bppArgb) {
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, format);
-            int byteCount = System.Math.Abs(bmpData.Stride) * bmp.Height;
+            int byteCount = Math.Abs(bmpData.Stride) * bmp.Height;
             byte[] bytes = new byte[byteCount];
             Marshal.Copy(bmpData.Scan0, bytes, 0, byteCount);
             bmp.UnlockBits(bmpData);

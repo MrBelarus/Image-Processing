@@ -2,6 +2,7 @@
 using ImageProcessing.Utils;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -17,7 +18,12 @@ namespace ImageProcessing {
         }
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
-            
+            if (imgOriginalBitmap != null) {
+                imgOriginalBitmap = new InvertColor().Process(imgOriginalBitmap);
+                //convert bitmap to bitmapImage for wpf image component
+                BitmapImage image = ImageManager.BitmapToImageSource(imgOriginalBitmap);
+                workSpaceImage_original.Source = image;
+            }
         }
 
         #region MenuBarActions
@@ -35,8 +41,6 @@ namespace ImageProcessing {
                     MessageBox.Show("Failed to load image", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                ImgToGrey imgToGrey = new ImgToGrey();
-                imgOriginalBitmap = imgToGrey.Process(imgOriginalBitmap);
 
                 //convert bitmap to bitmapImage for wpf image component
                 BitmapImage image = ImageManager.BitmapToImageSource(imgOriginalBitmap);
