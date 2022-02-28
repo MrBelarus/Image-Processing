@@ -1,4 +1,5 @@
-﻿using ImageProcessing.Utils;
+﻿using ImageProcessing.Code.Core;
+using ImageProcessing.Utils;
 using Microsoft.Win32;
 using System;
 using System.Windows;
@@ -9,6 +10,8 @@ namespace ImageProcessing {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+        private System.Drawing.Bitmap imgOriginalBitmap;
+
         public MainWindow() {
             InitializeComponent();
         }
@@ -26,11 +29,17 @@ namespace ImageProcessing {
         private void OnMenuOpenFileClick(object sender, RoutedEventArgs e) {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true) {
-                BitmapImage image = ImageManager.LoadImage(openFileDialog.FileName);
-                if (image == null) {
+                //load & remember bitmap
+                imgOriginalBitmap = ImageManager.LoadImage(openFileDialog.FileName);
+                if (imgOriginalBitmap == null) {
                     MessageBox.Show("Failed to load image", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+                ImgToGrey imgToGrey = new ImgToGrey();
+                imgOriginalBitmap = imgToGrey.Process(imgOriginalBitmap);
+
+                //convert bitmap to bitmapImage for wpf image component
+                BitmapImage image = ImageManager.BitmapToImageSource(imgOriginalBitmap);
                 workSpaceImage_original.Source = image;
 
                 //refresh width/height of canvas
