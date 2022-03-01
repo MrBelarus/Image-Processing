@@ -6,7 +6,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
 namespace ImageProcessing.Utils {
-    class ImageManager {
+    class ImageUtility
+        {
         public static Bitmap LoadImage(string path) {
             try {
                 return new Bitmap(path);
