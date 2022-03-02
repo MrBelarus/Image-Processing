@@ -65,15 +65,17 @@ namespace ImageProcessing.Code.Core {
 
             int offsetY = y * Stride;
             int offsetX;
+            int bitShift;
 
             switch (ColorDepth) {
                 case 1:
                     offsetX = x / 8;
-                    int bitShift = 7 - (x % 8);
+                    bitShift = 7 - (x % 8);
                     return (imgBytes[offsetY + offsetX] & GetPowerOfTwo(bitShift)) >> bitShift;
                 case 4:
-
-                    break;
+                    offsetX = x / 4;
+                    bitShift = 3 - (x % 4);
+                    return (imgBytes[offsetY + offsetX] & GetPowerOfTwo(bitShift)) >> bitShift;
                 case 8:
 
                     break;
@@ -91,6 +93,18 @@ namespace ImageProcessing.Code.Core {
             return 1;
         }
 
+        public int[] GetPixels() {
+            int[] pixels = new int[Width * Height];
+
+            for(int y = 0; y < Height; y++) {
+                for(int x = 0; x < Width; x++) {
+                    pixels[y * Width + x] = GetPixel(x, y);
+                }
+            }
+
+            return pixels;
+        }
+
         public void SetPixel(int x, int y, int value) {
             if (_bitmap == null) {
                 throw new Exception("Bitmap is null, can't set pixel!");
@@ -98,11 +112,12 @@ namespace ImageProcessing.Code.Core {
 
             int offsetY = y * Stride;
             int offsetX;
+            byte newValue;
 
             switch (ColorDepth) {
                 case 1:
                     offsetX = x / 8;
-                    byte newValue = imgBytes[offsetY + offsetX];
+                    newValue = imgBytes[offsetY + offsetX];
                     if (value == 1) {
                         newValue |= (byte)((byte)value << (7 - x % 8));
                     }
@@ -114,7 +129,17 @@ namespace ImageProcessing.Code.Core {
                     imgBytes[offsetY + offsetX] = newValue;
                     break;
                 case 4:
-
+                    offsetX = x / 4;
+                    newValue = imgBytes[offsetY + offsetX];
+                    if (value > 0) {
+                        newValue |= (byte)value;
+                    }
+                    else {
+                        value = 1;
+                        newValue &= (byte)~((byte)value << (3 - x % 4));
+                        //newValue -= (byte)GetPowerOfTwo(7 - x % 8);
+                    }
+                    imgBytes[offsetY + offsetX] = newValue;
                     break;
                 case 8:
 

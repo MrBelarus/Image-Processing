@@ -19,8 +19,14 @@ namespace ImageProcessing {
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
             if (imgOriginal != null) {
-                imgOriginal = new InvertColor().Process(imgOriginal);
+                //imgOriginal = new InvertColor().Process(imgOriginal);
                 workSpaceImage_original.Source = imgOriginal.GetBitmapImage();
+
+                //matrix
+                int[] a4_matrix = ImageMatrixCalculator.GetA4Matrix(imgOriginal);
+                int[] a8_matrix = ImageMatrixCalculator.GetA8Matrix(imgOriginal);
+                FileManager.SaveImageMatrixTxt("matrix_a4.txt", a4_matrix, imgOriginal.Width, imgOriginal.Height);
+                FileManager.SaveImageMatrixTxt("matrix_a8.txt", a8_matrix, imgOriginal.Width, imgOriginal.Height);
             }
         }
 

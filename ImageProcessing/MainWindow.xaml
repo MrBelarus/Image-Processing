@@ -53,8 +53,10 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="empty">
-                <Grid Background="#FFE5E5E5"/>
+            <TabItem Header="matrix">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="matrix" />
+                </Grid>
             </TabItem>
         </TabControl>
     </DockPanel>
