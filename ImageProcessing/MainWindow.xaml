@@ -53,9 +53,13 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="matrix">
+            <TabItem Header="matrix" Height="20" VerticalAlignment="Top">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid x:Name="matrix" />
+                    <DataGrid x:Name="imageMatrix" Margin="10,10,10,95" />
+                    <ComboBox x:Name="matrixDropMenu" HorizontalAlignment="Left" Margin="10,398,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="btnMatrixDisplay" Click="btnMatrixDisplay_Click" Content="Display" HorizontalAlignment="Left" Margin="135,398,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="#FF8DFF8D"/>
+                    <Grid/>
+
                 </Grid>
             </TabItem>
         </TabControl>

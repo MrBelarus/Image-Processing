@@ -4,6 +4,11 @@ using Microsoft.Win32;
 using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Dynamic;
+using System.Collections.Generic;
+using ImageProcessing.Core;
 
 namespace ImageProcessing {
     /// <summary>
@@ -12,21 +17,29 @@ namespace ImageProcessing {
     public partial class MainWindow : Window {
         private ImageData imgOriginal;
         private ImageData imgProcessed;
+        private ImageProcesser imgProcesser;
+
+        readonly string[] matrixDisplayOperations = new string[] {
+            "Pixels",
+            "A4 matrix",
+            "A8 matrix",
+        };
 
         public MainWindow() {
             InitializeComponent();
+            InitMatrixDropDownMenu();
+        }
+
+        private void InitMatrixDropDownMenu() {
+            foreach (string item in matrixDisplayOperations) {
+                matrixDropMenu.Items.Add(item);
+            }
         }
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
-            if (imgOriginal != null) {
-                //imgOriginal = new InvertColor().Process(imgOriginal);
-                workSpaceImage_original.Source = imgOriginal.GetBitmapImage();
-
-                //matrix
-                int[] a4_matrix = ImageMatrixCalculator.GetA4Matrix(imgOriginal);
-                int[] a8_matrix = ImageMatrixCalculator.GetA8Matrix(imgOriginal);
-                FileManager.SaveImageMatrixTxt("matrix_a4.txt", a4_matrix, imgOriginal.Width, imgOriginal.Height);
-                FileManager.SaveImageMatrixTxt("matrix_a8.txt", a8_matrix, imgOriginal.Width, imgOriginal.Height);
+            if (imgOriginal != null && imgProcesser != null) {
+                imgProcessed = imgProcesser.Process(imgOriginal);
+                workSpaceImage.Source = imgProcessed.GetBitmapImage();
             }
         }
 
@@ -71,5 +84,47 @@ namespace ImageProcessing {
             Application.Current.Shutdown();
         }
         #endregion
+
+        private void btnMatrixDisplay_Click(object sender, RoutedEventArgs e) {
+            switch (matrixDropMenu.SelectedItem.ToString()) {
+                case "Pixels":
+                    DisplayMatrix(imgOriginal.GetPixels(), imgOriginal.Width, imgOriginal.Height);
+                    break;
+                case "A4 matrix":
+                    DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(imgOriginal), 
+                        imgOriginal.Width, imgOriginal.Height);
+                    break;
+                case "A8 matrix":
+                    DisplayMatrix(ImageMatrixCalculator.GetA8Matrix(imgOriginal),
+                        imgOriginal.Width, imgOriginal.Height);
+                    break;
+            }
+            
+        }
+
+        private void DisplayMatrix(int[] matrix, int width, int height) {
+            imageMatrix.Columns.Clear();
+            imageMatrix.Items.Clear();
+
+            string[] labels = new string[width];
+            for(int i = 0; i < width; i++) {
+                labels[i] = i.ToString();
+
+                DataGridTextColumn col = new DataGridTextColumn();
+                col.Header = labels[i];
+                col.Binding = new Binding(labels[i]);
+
+                imageMatrix.Columns.Add(col);
+
+            }
+
+            for(int y = 0; y < height; y++) {
+                dynamic row = new ExpandoObject();
+                for (int x = 0; x < width; x++) {
+                    ((IDictionary<string, object>)row)[labels[x]] = matrix[y * width + x];
+                }
+                imageMatrix.Items.Add(row);
+            }
+        }
     }
 }
