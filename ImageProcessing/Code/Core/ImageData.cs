@@ -74,16 +74,20 @@ namespace ImageProcessing.Code.Core {
 
             switch (ColorDepth) {
                 case 1:
-                    offsetX = x / 8;
+                    offsetX = x / 8; //every bit is a new pixel, so 1 byte has 8 pixels
                     bitShift = 7 - (x % 8);
                     return (imgBytes[offsetY + offsetX] & GetPowerOfTwo(bitShift)) >> bitShift;
                 case 4:
-                    offsetX = x / 4;
-                    bitShift = 3 - (x % 4);
-                    return (imgBytes[offsetY + offsetX] & GetPowerOfTwo(bitShift)) >> bitShift;
+                    offsetX = x / 2; //every 4bits is a new pixel, so 1 byte has 2 pixels
+                    if (x % 2 == 0) {
+                        return imgBytes[offsetY + offsetX] >> 4;
+                    }
+                    else {
+                        return imgBytes[offsetY + offsetX] & (0x0f);
+                    }
                 case 8:
-
-                    break;
+                    offsetX = x; //every 8bits is a new pixel, so 1 byte has 1 pixels
+                    return imgBytes[offsetY + offsetX];
                 case 16:
 
                     break;
@@ -121,7 +125,7 @@ namespace ImageProcessing.Code.Core {
 
             switch (ColorDepth) {
                 case 1:
-                    offsetX = x / 8;
+                    offsetX = x / 8; //every bit is a new pixel, so 1 byte has 8 pixels
                     newValue = imgBytes[offsetY + offsetX];
                     if (value == 1) {
                         newValue |= (byte)((byte)value << (7 - x % 8));
@@ -129,25 +133,21 @@ namespace ImageProcessing.Code.Core {
                     else {
                         value = 1;
                         newValue &= (byte)~((byte)value << (7 - x % 8));
-                        //newValue -= (byte)GetPowerOfTwo(7 - x % 8);
                     }
                     imgBytes[offsetY + offsetX] = newValue;
                     break;
                 case 4:
-                    offsetX = x / 4;
-                    newValue = imgBytes[offsetY + offsetX];
-                    if (value > 0) {
-                        newValue |= (byte)value;
+                    offsetX = x / 2; //every 4bits is a new pixel, so 1 byte has 2 pixels
+                    if (x % 2 == 0) {
+                        imgBytes[offsetY + offsetX] = (byte)(imgBytes[offsetY + offsetX] & 0x0f | (value << 4));
                     }
                     else {
-                        value = 1;
-                        newValue &= (byte)~((byte)value << (3 - x % 4));
-                        //newValue -= (byte)GetPowerOfTwo(7 - x % 8);
+                        imgBytes[offsetY + offsetX] = (byte)(imgBytes[offsetY + offsetX] & 0xf0 | value);
                     }
-                    imgBytes[offsetY + offsetX] = newValue;
                     break;
                 case 8:
-
+                    offsetX = x; //every 8bits is a new pixel, so 1 byte has 1 pixels
+                    imgBytes[offsetY + offsetX] = (byte)value;
                     break;
                 case 16:
 

@@ -29,10 +29,10 @@ namespace ImageProcessing.Code.Core {
                     _1BitColorDepth(image);
                     break;
                 case 4:
-                    //
+                    _4BitColorDepth(image);
                     break;
                 case 8:
-                    //
+                    _8BitColorDepth(image);
                     break;
                 case 16:
                     //
@@ -51,10 +51,33 @@ namespace ImageProcessing.Code.Core {
         }
 
         private void _1BitColorDepth(ImageData imageData) {
+            int maxPixelValue = 1;
             for (int y = 0; y < imageData.Height; y++) {
                 for (int x = 0; x < imageData.Width; x++) {
                     int pixel = imageData.GetPixel(x, y);
-                    imageData.SetPixel(x, y, pixel == 1 ? 0 : 1);
+                    imageData.SetPixel(x, y, maxPixelValue - pixel);
+                }
+            }
+            imageData.ApplyChanges();
+        }
+
+        private void _4BitColorDepth(ImageData imageData) {
+            int maxPixelValue = 15;
+            for (int y = 0; y < imageData.Height; y++) {
+                for (int x = 0; x < imageData.Width; x++) {
+                    int pixel = imageData.GetPixel(x, y);
+                    imageData.SetPixel(x, y, maxPixelValue - pixel);
+                }
+            }
+            imageData.ApplyChanges();
+        }
+
+        private void _8BitColorDepth(ImageData imageData) {
+            int maxPixelValue = 255;
+            for (int y = 0; y < imageData.Height; y++) {
+                for (int x = 0; x < imageData.Width; x++) {
+                    int pixel = imageData.GetPixel(x, y);
+                    imageData.SetPixel(x, y, maxPixelValue - pixel);
                 }
             }
             imageData.ApplyChanges();

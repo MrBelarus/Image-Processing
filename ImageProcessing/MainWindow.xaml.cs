@@ -56,6 +56,7 @@ namespace ImageProcessing {
             if (openFileDialog.ShowDialog() == true) {
                 //load & remember bitmap
                 imgOriginal = new ImageData(openFileDialog.FileName);
+
                 if (imgOriginal == null) {
                     MessageBox.Show("Failed to load image", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
