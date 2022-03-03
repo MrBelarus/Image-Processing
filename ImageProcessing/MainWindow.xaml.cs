@@ -28,6 +28,8 @@ namespace ImageProcessing {
         public MainWindow() {
             InitializeComponent();
             InitMatrixDropDownMenu();
+
+            imgProcesser = new InvertColor();
         }
 
         private void InitMatrixDropDownMenu() {
@@ -38,7 +40,7 @@ namespace ImageProcessing {
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
             if (imgOriginal != null && imgProcesser != null) {
-                imgProcessed = imgProcesser.Process(imgOriginal);
+                imgProcessed = imgProcesser.Process(new ImageData(imgOriginal));
                 workSpaceImage.Source = imgProcessed.GetBitmapImage();
             }
         }

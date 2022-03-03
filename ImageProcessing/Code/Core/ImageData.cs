@@ -16,6 +16,11 @@ namespace ImageProcessing.Code.Core {
             _bitmap = ImageUtility.LoadImage(pathToImage);
         }
 
+        public ImageData(ImageData from) {
+            this._bitmap = ImageUtility.BitmapFromBytes(
+                from.ImageBytes, from.Width, from.Height, from._bitmap.PixelFormat);
+        }
+
         public int Width => _bitmap.Width;
         public int Height => _bitmap.Height;
 
