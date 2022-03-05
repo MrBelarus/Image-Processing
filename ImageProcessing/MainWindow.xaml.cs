@@ -30,6 +30,7 @@ namespace ImageProcessing {
             InitMatrixDropDownMenu();
 
             imgProcesser = new InvertColor();
+            //imgProcesser = new TestProcesser();
         }
 
         private void InitMatrixDropDownMenu() {
@@ -94,7 +95,7 @@ namespace ImageProcessing {
                     DisplayMatrix(imgOriginal.GetPixels(), imgOriginal.Width, imgOriginal.Height);
                     break;
                 case "A4 matrix":
-                    DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(imgOriginal), 
+                    DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(imgOriginal),
                         imgOriginal.Width, imgOriginal.Height);
                     break;
                 case "A8 matrix":
@@ -102,7 +103,7 @@ namespace ImageProcessing {
                         imgOriginal.Width, imgOriginal.Height);
                     break;
             }
-            
+
         }
 
         private void DisplayMatrix(int[] matrix, int width, int height) {
@@ -110,7 +111,7 @@ namespace ImageProcessing {
             imageMatrix.Items.Clear();
 
             string[] labels = new string[width];
-            for(int i = 0; i < width; i++) {
+            for (int i = 0; i < width; i++) {
                 labels[i] = i.ToString();
 
                 DataGridTextColumn col = new DataGridTextColumn();
@@ -121,7 +122,7 @@ namespace ImageProcessing {
 
             }
 
-            for(int y = 0; y < height; y++) {
+            for (int y = 0; y < height; y++) {
                 dynamic row = new ExpandoObject();
                 for (int x = 0; x < width; x++) {
                     ((IDictionary<string, object>)row)[labels[x]] = matrix[y * width + x];

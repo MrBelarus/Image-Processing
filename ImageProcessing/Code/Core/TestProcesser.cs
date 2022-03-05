@@ -1,5 +1,6 @@
 ﻿using ImageProcessing.Core;
 using System;
+using System.Drawing;
 
 namespace ImageProcessing.Code.Core {
     class TestProcesser : ImageProcesser {
@@ -32,7 +33,7 @@ namespace ImageProcessing.Code.Core {
         private void _1bitImage(ImageData image) {
             for (int y = 0; y < image.Height; y++) {
                 for (int x = 0; x < image.Width; x++) {
-                    image.SetPixel(x, y, 5);
+                    image.SetPixel(x, y, 1);
                 }
             }
             image.ApplyChanges();
@@ -50,7 +51,7 @@ namespace ImageProcessing.Code.Core {
         private void _8bitImage(ImageData image) {
             for (int y = 0; y < image.Height; y++) {
                 for (int x = 0; x < image.Width; x++) {
-                    image.SetPixel(x, y, 5);
+                    image.SetPixel(x, y, image.GetPixel(x,y));
                 }
             }
             image.ApplyChanges();
