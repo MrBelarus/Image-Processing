@@ -23,6 +23,7 @@ namespace ImageProcessing {
             "Pixels",
             "A4 matrix",
             "A8 matrix",
+            "Manhattan Distance",
         };
 
         public MainWindow() {
@@ -100,6 +101,10 @@ namespace ImageProcessing {
                     break;
                 case "A8 matrix":
                     DisplayMatrix(ImageMatrixCalculator.GetA8Matrix(imgOriginal),
+                        imgOriginal.Width, imgOriginal.Height);
+                    break;
+                case "Manhattan Distance":
+                    DisplayMatrix(ImageMatrixCalculator.GetManhattanDistanceMatrix(imgOriginal),
                         imgOriginal.Width, imgOriginal.Height);
                     break;
             }
