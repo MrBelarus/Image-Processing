@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace ImageProcessing.Code.Core {
     class ImageMatrixCalculator {
@@ -84,14 +85,16 @@ namespace ImageProcessing.Code.Core {
             return a4matrix;
         }
 
+
+        #region Manhattan Distance
         public static int[] GetManhattanDistanceMatrix(ImageData imageData) {
             imgHeight = imageData.Height;
             imgWidth = imageData.Width;
             pixels = imageData.GetPixels();
 
             int[] distMatrix = new int[imgWidth * imgHeight];
-            for(int y = 0; y < imgHeight; y++) {
-                for(int x = 0; x < imgWidth; x++) {
+            for (int y = 0; y < imgHeight; y++) {
+                for (int x = 0; x < imgWidth; x++) {
                     distMatrix[x + y * imgWidth] = GetManhattanDistance(x, y);
                 }
             }
@@ -141,11 +144,12 @@ namespace ImageProcessing.Code.Core {
                 }
 
                 if (minDist != int.MaxValue) {
-                    return lookingFor == 0 ? minDist : -minDist;
+                    maxRadius = minDist;
+                    //return lookingFor == 0 ? minDist : -minDist;
                 }
             }
 
-            return int.MinValue;
+            return lookingFor == 0 ? minDist : -minDist;
         }
 
         private static void CheckForMinDistance(int x, int y, int offsetX, int offsetY) {
@@ -157,6 +161,23 @@ namespace ImageProcessing.Code.Core {
             if (curDist < minDist) {
                 minDist = curDist;
             }
+        }
+
+        #endregion
+
+
+        public static int[] ConvertDistanceToPixelGreyValues(int[] distances) {
+            int minDistance = distances.Max();
+            int maxDistance = distances.Min();
+            int amp = maxDistance - minDistance;
+
+            int[] result = new int[distances.Length];
+
+            for(int i = 0; i < distances.Length; i++) {
+                result[i] = 255 - (distances[i] - minDistance) * 255 / amp;
+            }
+
+            return result;
         }
     }
 }

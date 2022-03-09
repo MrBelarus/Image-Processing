@@ -91,15 +91,15 @@ namespace ImageProcessing.Code.Core {
                     return imgBytes[offsetY + offsetX];
                 case 16:
                     offsetX = 2 * x;
-                    return imgBytes[offsetY + offsetX] + imgBytes[offsetY + offsetX + 1];
+                    return (imgBytes[offsetY + offsetX] << 8) + imgBytes[offsetY + offsetX + 1];
                 case 24:
                     offsetX = 3 * x;
-                    return imgBytes[offsetY + offsetX] + imgBytes[offsetY + offsetX + 1] + 
+                    return (imgBytes[offsetY + offsetX] << 16) + (imgBytes[offsetY + offsetX + 1] << 8) + 
                            imgBytes[offsetY + offsetX + 2];
                 case 32:
                     offsetX = 4 * x;
-                    return imgBytes[offsetY + offsetX] + imgBytes[offsetY + offsetX + 1] + 
-                           imgBytes[offsetY + offsetX + 2] + imgBytes[offsetY + offsetX + 3];
+                    return (imgBytes[offsetY + offsetX] << 24) + (imgBytes[offsetY + offsetX + 1] << 16) + 
+                           (imgBytes[offsetY + offsetX + 2] << 8) + imgBytes[offsetY + offsetX + 3];
             }
 
             return 1;
@@ -161,16 +161,16 @@ namespace ImageProcessing.Code.Core {
                     break;
                 case 24:
                     offsetX = 3 * x;
-                    imgBytes[offsetY + offsetX] = (byte)(value >> 16);
-                    imgBytes[offsetY + offsetX + 1] = (byte)(value & 0xff00);
-                    imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x00ff);
+                    imgBytes[offsetY + offsetX] = (byte)((value & 0xff0000) >> 16);
+                    imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff00) >> 8);
+                    imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x0000ff);
                     break;
                 case 32:
                     offsetX = 4 * x;
-                    imgBytes[offsetY + offsetX] = (byte)(value >> 24);
-                    imgBytes[offsetY + offsetX + 1] = (byte)(value & 0xff0000);
-                    imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x00ff00);
-                    imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x0000ff);
+                    imgBytes[offsetY + offsetX] = (byte)((value & 0xff000000) >> 24);
+                    imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff0000) >> 16);
+                    imgBytes[offsetY + offsetX + 2] = (byte)((value & 0x0000ff00) >> 8);
+                    imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x000000ff);
                     break;
             }
         }

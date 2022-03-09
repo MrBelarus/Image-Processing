@@ -26,24 +26,38 @@ namespace ImageProcessing {
             "Manhattan Distance",
         };
 
+        readonly string[] matrixPerformOperations = new string[] {
+            "Convert to grey",
+        };
+
         public MainWindow() {
             InitializeComponent();
-            InitMatrixDropDownMenu();
+            InitDropDownMenu(matrixDropMenu, matrixDisplayOperations);
+            InitDropDownMenu(performDropMenu, matrixPerformOperations);
+
+            imageMatrix.IsReadOnly = true;
 
             imgProcesser = new InvertColor();
             //imgProcesser = new TestProcesser();
         }
 
-        private void InitMatrixDropDownMenu() {
-            foreach (string item in matrixDisplayOperations) {
-                matrixDropMenu.Items.Add(item);
+        private void InitDropDownMenu(ComboBox menu, string[] items) {
+            foreach (string item in items) {
+                menu.Items.Add(item);
             }
         }
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
             if (imgOriginal != null && imgProcesser != null) {
-                imgProcessed = imgProcesser.Process(new ImageData(imgOriginal));
+                switch (performDropMenu.SelectedItem) {
+                    default:
+                        imgProcessed = ImageUtility.Convert1BitToGray24Bit(imgOriginal);
+                        break;
+                }
+                //imgProcessed = imgProcesser.Process(new ImageData(imgOriginal));
                 workSpaceImage.Source = imgProcessed.GetBitmapImage();
+                imageCanvas.Width = imgOriginal.Width;
+                imageCanvas.Height = imgOriginal.Height;
             }
         }
 
@@ -64,6 +78,8 @@ namespace ImageProcessing {
                     return;
                 }
 
+                workSpaceImage_original.Width = imgOriginal.Width;
+                workSpaceImage_original.Height = imgOriginal.Height;
                 workSpaceImage_original.Source = imgOriginal.GetBitmapImage();
 
                 //refresh width/height of canvas
@@ -132,6 +148,7 @@ namespace ImageProcessing {
                 for (int x = 0; x < width; x++) {
                     ((IDictionary<string, object>)row)[labels[x]] = matrix[y * width + x];
                 }
+                
                 imageMatrix.Items.Add(row);
             }
         }

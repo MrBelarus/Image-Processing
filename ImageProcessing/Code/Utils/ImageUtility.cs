@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageProcessing.Code.Core;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -70,6 +71,24 @@ namespace ImageProcessing.Utils {
         /// </summary>
         public static int GetColorDepth(Bitmap bitmap) {
             return Image.GetPixelFormatSize(bitmap.PixelFormat);
+        }
+
+        public static ImageData Convert1BitToGray24Bit(ImageData original) {
+            int[] pixelValues = ImageMatrixCalculator.ConvertDistanceToPixelGreyValues(
+                                ImageMatrixCalculator.GetManhattanDistanceMatrix(original));
+
+            Bitmap bitmap =
+                new Bitmap(original.Width, original.Height, PixelFormat.Format24bppRgb);
+            ImageData data = new ImageData(bitmap);
+            for (int y = 0; y < data.Height; y++) {
+                for (int x = 0; x < data.Width; x++) {
+                    int pxl = pixelValues[y * data.Width + x];
+                    data.SetPixel(x, y, (pxl << 16) + (pxl << 8) + pxl);
+                }
+            }
+            data.ApplyChanges();
+
+            return data;
         }
     }
 }
