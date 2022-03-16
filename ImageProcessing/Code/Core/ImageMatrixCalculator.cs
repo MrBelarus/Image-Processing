@@ -163,6 +163,46 @@ namespace ImageProcessing.Code.Core {
             }
         }
 
+        /// <summary>
+        /// X = value, Y = frequency
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public static List<OxyPlot.DataPoint> CalculateValuesFrequences(int[] values) {
+            List<OxyPlot.DataPoint> points = new List<OxyPlot.DataPoint>();
+
+            List<int> valuesList = values.ToList();
+
+            while(valuesList.Count > 0) {
+                int valueCount = 1;
+                int value = valuesList[0];
+                valuesList.RemoveAt(0);
+
+                for(int j = 0; j < valuesList.Count; j++){
+                    if(valuesList[j] == value) {
+                        valuesList.RemoveAt(j);
+                        valueCount++;
+                        j--;
+                    }
+                }
+
+                //sorted inserting
+                bool flag = true;
+                for(int j = 0; j < points.Count; j++) {
+                    if(points[j].X > value) {
+                        points.Insert(j, new OxyPlot.DataPoint(value, valueCount));
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    points.Add(new OxyPlot.DataPoint(value, valueCount));
+                }
+            }
+
+            return points;
+        }
+
         #endregion
 
 

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:ImageProcessing"
         mc:Ignorable="d"
         Title="Image Processing" Height="550" Width="800" ResizeMode="CanMinimize">
@@ -24,6 +25,7 @@
                             <SolidColorBrush Color="#FFB3FFA7" />
                         </Button.Background>
                     </Button>
+                    <CheckBox x:Name="btnConvertBinaryOriginal" Content="Convert to binary" HorizontalAlignment="Left" Margin="500,430,0,0" VerticalAlignment="Top" Height="22" Width="130" Background="#FF8DFF8D"/>
                     <ComboBox x:Name="performDropMenu" HorizontalAlignment="Left" Margin="202,421,0,0" VerticalAlignment="Top" Width="120"/>
 
                     <StackPanel x:Name="pnlWorkSpaceImage" Margin="10,10,397,61">
@@ -56,11 +58,25 @@
             </TabItem>
             <TabItem Header="matrix" Height="20" VerticalAlignment="Top">
                 <Grid Background="#FFE5E5E5">
+                    <CheckBox x:Name="btnMatrixToggle" Content="Perform on original" HorizontalAlignment="Left" Margin="215,403,0,0" VerticalAlignment="Top" Height="22" Width="130" Background="#FF8DFF8D"/>
                     <DataGrid x:Name="imageMatrix" Margin="10,10,10,95" />
-                    <ComboBox x:Name="matrixDropMenu" HorizontalAlignment="Left" Margin="10,398,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Button x:Name="btnMatrixDisplay" Click="btnMatrixDisplay_Click" Content="Display" HorizontalAlignment="Left" Margin="135,398,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="#FF8DFF8D"/>
-                    <Grid/>
+                    <ComboBox x:Name="matrixDropMenu" HorizontalAlignment="Left" Margin="10,403,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="btnMatrixDisplay" Click="btnMatrixDisplay_Click" Content="Display" HorizontalAlignment="Left" Margin="135,403,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="#FF8DFF8D"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="graphs" Height="20" VerticalAlignment="Top">
+                <Grid Margin="0,0,0,45">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" Margin="0,0,0,51">
+                        <oxy:Plot x:Name="Graph" Title="Гистограмма" Width="2200" >
+                            <oxy:Plot.Series>
+                                <oxy:LineSeries ItemsSource="{Binding Points}"/>
+                            </oxy:Plot.Series>
+                        </oxy:Plot>
+                    </ScrollViewer>
 
+
+                    <ComboBox Visibility="Hidden" Width="120" Margin="34,417,640,0"/>
+                    <Button x:Name="btnGraphDisplay" Click="btnGraphDisplay_Click" Content="Display" HorizontalAlignment="Left" Margin="159,397,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="#FF8DFF8D"/>
                 </Grid>
             </TabItem>
         </TabControl>

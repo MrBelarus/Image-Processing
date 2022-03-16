@@ -18,9 +18,11 @@ namespace ImageProcessing {
         private ImageData imgOriginal;
         private ImageData imgProcessed;
         private ImageProcesser imgProcesser;
+        private GraphDisplayer graphDisplayer;
 
         readonly string[] matrixDisplayOperations = new string[] {
             "Pixels",
+            "RGB",
             "A4 matrix",
             "A8 matrix",
             "Manhattan Distance",
@@ -36,6 +38,7 @@ namespace ImageProcessing {
             InitDropDownMenu(performDropMenu, matrixPerformOperations);
 
             imageMatrix.IsReadOnly = true;
+            graphDisplayer = new GraphDisplayer(Graph);
 
             imgProcesser = new InvertColor();
             //imgProcesser = new TestProcesser();
@@ -45,6 +48,7 @@ namespace ImageProcessing {
             foreach (string item in items) {
                 menu.Items.Add(item);
             }
+            menu.SelectedIndex = 0;
         }
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
@@ -72,6 +76,9 @@ namespace ImageProcessing {
             if (openFileDialog.ShowDialog() == true) {
                 //load & remember bitmap
                 imgOriginal = new ImageData(openFileDialog.FileName);
+                if (imgOriginal.ColorDepth != 1 && (bool)btnConvertBinaryOriginal.IsChecked) {
+                    imgOriginal = ImageUtility.ConvertToBinary(imgOriginal);
+                }
 
                 if (imgOriginal == null) {
                     MessageBox.Show("Failed to load image", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -89,10 +96,15 @@ namespace ImageProcessing {
         }
 
         private void OnMenuSaveFileClick(object sender, RoutedEventArgs e) {
+            if (workSpaceImage.Source == null) {
+                MessageBox.Show($"Failed to save image (it's null)", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             if (saveFileDialog.ShowDialog() == true) {
                 try {
-                    ImageUtility.SaveImage(workSpaceImage_original, saveFileDialog.FileName, new BmpBitmapEncoder());
+                    ImageUtility.SaveImage(workSpaceImage, saveFileDialog.FileName, new BmpBitmapEncoder());
                 }
                 catch (Exception ex) {
                     MessageBox.Show($"{ex.Message}\n Failed to save image", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -107,27 +119,36 @@ namespace ImageProcessing {
         #endregion
 
         private void btnMatrixDisplay_Click(object sender, RoutedEventArgs e) {
+            ImageData image = (bool)btnMatrixToggle.IsChecked ? imgOriginal : imgProcessed;
+
+            if(image == null) {
+                return;
+            }
+
             switch (matrixDropMenu.SelectedItem.ToString()) {
                 case "Pixels":
-                    DisplayMatrix(imgOriginal.GetPixels(), imgOriginal.Width, imgOriginal.Height);
+                    DisplayMatrix(image.GetBinaryPixelsInverted(), image.Width, image.Height);
+                    break;
+                case "RGB":
+                    DisplayMatrix(image.GetPixelsRGB(), image.Width, image.Height);
                     break;
                 case "A4 matrix":
-                    DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(imgOriginal),
-                        imgOriginal.Width, imgOriginal.Height);
+                    DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(image),
+                        image.Width, image.Height);
                     break;
                 case "A8 matrix":
-                    DisplayMatrix(ImageMatrixCalculator.GetA8Matrix(imgOriginal),
-                        imgOriginal.Width, imgOriginal.Height);
+                    DisplayMatrix(ImageMatrixCalculator.GetA8Matrix(image),
+                        image.Width, image.Height);
                     break;
                 case "Manhattan Distance":
-                    DisplayMatrix(ImageMatrixCalculator.GetManhattanDistanceMatrix(imgOriginal),
-                        imgOriginal.Width, imgOriginal.Height);
+                    DisplayMatrix(ImageMatrixCalculator.GetManhattanDistanceMatrix(image),
+                        image.Width, image.Height);
                     break;
             }
 
         }
 
-        private void DisplayMatrix(int[] matrix, int width, int height) {
+        private void DisplayMatrix<T>(T[] matrix, int width, int height) {
             imageMatrix.Columns.Clear();
             imageMatrix.Items.Clear();
 
@@ -151,6 +172,11 @@ namespace ImageProcessing {
                 
                 imageMatrix.Items.Add(row);
             }
+        }
+
+        private void btnGraphDisplay_Click(object sender, RoutedEventArgs e) {
+            var result = ImageMatrixCalculator.GetManhattanDistanceMatrix(imgOriginal);
+            graphDisplayer.DisplayColumnGraph(ImageMatrixCalculator.CalculateValuesFrequences(result));
         }
     }
 }

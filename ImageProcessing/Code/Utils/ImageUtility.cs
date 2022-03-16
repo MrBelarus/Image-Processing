@@ -90,5 +90,23 @@ namespace ImageProcessing.Utils {
 
             return data;
         }
+
+        public static ImageData ConvertToBinary(ImageData original) {
+            Bitmap newBitMap = new Bitmap(original.Width, original.Height,
+                PixelFormat.Format1bppIndexed);
+            ImageData result = new ImageData(newBitMap);
+            int width = original.Width;
+
+            int t = (1 << (original.ColorDepth - 1)) / 2;
+
+            int[] oldPixels = original.GetPixels();
+
+            for (int i = 0; i < oldPixels.Length; i++) {
+                result.SetPixel(i % width, i / width, oldPixels[i] > t ? 1 : 0);
+            }
+            result.ApplyChanges();
+
+            return result;
+        }
     }
 }

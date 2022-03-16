@@ -117,6 +117,32 @@ namespace ImageProcessing.Code.Core {
             return pixels;
         }
 
+        public int[] GetBinaryPixelsInverted() {
+            int[] pixels = new int[Width * Height];
+
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    pixels[y * Width + x] = GetPixel(x, y) == 1 ? 0 : 1;
+                }
+            }
+
+            return pixels;
+        }
+
+        public string[] GetPixelsRGB() {
+            string[] pixels = new string[Width * Height];
+
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    int pxl = GetPixel(x, y);
+                    pixels[y * Width + x] = ((pxl & 0xff0000) >> 16).ToString() + ", " + 
+                                            ((pxl & 0x00ff00) >> 8).ToString() + ", "+ (pxl & 0x0000ff).ToString();
+                }
+            }
+
+            return pixels;
+        }
+
         public void SetPixel(int x, int y, int value) {
             if (_bitmap == null) {
                 throw new Exception("Bitmap is null, can't set pixel!");
