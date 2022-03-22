@@ -77,7 +77,7 @@ namespace ImageProcessing {
                 //load & remember bitmap
                 imgOriginal = new ImageData(openFileDialog.FileName);
                 if (imgOriginal.ColorDepth != 1 && (bool)btnConvertBinaryOriginal.IsChecked) {
-                    imgOriginal = ImageUtility.ConvertToBinary(imgOriginal);
+                    imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true);
                 }
 
                 if (imgOriginal == null) {
@@ -97,7 +97,7 @@ namespace ImageProcessing {
 
         private void OnMenuSaveFileClick(object sender, RoutedEventArgs e) {
             if (workSpaceImage.Source == null) {
-                MessageBox.Show($"Failed to save image (it's null)", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Failed to save result image (it's null)", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 

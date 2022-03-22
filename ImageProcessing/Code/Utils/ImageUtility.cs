@@ -1,4 +1,5 @@
 ﻿using ImageProcessing.Code.Core;
+using ImageProcessing.Code.Utils;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -91,19 +92,34 @@ namespace ImageProcessing.Utils {
             return data;
         }
 
-        public static ImageData ConvertToBinary(ImageData original) {
+        public static ImageData ConvertToBinary(ImageData original, bool ignoreAlpha) {
             Bitmap newBitMap = new Bitmap(original.Width, original.Height,
                 PixelFormat.Format1bppIndexed);
             ImageData result = new ImageData(newBitMap);
             int width = original.Width;
+            int clrDepth = original.ColorDepth;
 
-            int t = (1 << (original.ColorDepth - 1)) / 2;
+            if (ignoreAlpha) {
+                clrDepth = MathModule.Clamp(original.ColorDepth, 1, 24);
+            }
+             
+            int t = (1 << (clrDepth - 1)) / 2;
 
             int[] oldPixels = original.GetPixels();
 
-            for (int i = 0; i < oldPixels.Length; i++) {
-                result.SetPixel(i % width, i / width, oldPixels[i] > t ? 1 : 0);
+            if (ignoreAlpha) {
+                int pxlValue;
+                for (int i = 0; i < oldPixels.Length; i++) {
+                    pxlValue = oldPixels[i] & 0x00ffffff;
+                    result.SetPixel(i % width, i / width, pxlValue > t ? 1 : 0);
+                }
             }
+            else {
+                for (int i = 0; i < oldPixels.Length; i++) {
+                    result.SetPixel(i % width, i / width, oldPixels[i] > t ? 1 : 0);
+                }
+            }
+
             result.ApplyChanges();
 
             return result;

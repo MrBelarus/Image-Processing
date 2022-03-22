@@ -207,14 +207,14 @@ namespace ImageProcessing.Code.Core {
 
 
         public static int[] ConvertDistanceToPixelGreyValues(int[] distances) {
-            int minDistance = distances.Max();
-            int maxDistance = distances.Min();
+            int minDistance = distances.Min();
+            int maxDistance = distances.Max();
             int amp = maxDistance - minDistance;
 
             int[] result = new int[distances.Length];
 
             for(int i = 0; i < distances.Length; i++) {
-                result[i] = 255 - (distances[i] - minDistance) * 255 / amp;
+                result[i] = (distances[i] - minDistance) * 255 / amp;
             }
 
             return result;
