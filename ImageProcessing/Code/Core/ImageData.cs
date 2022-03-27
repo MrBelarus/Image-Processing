@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
 
-namespace ImageProcessing.Code.Core {
+namespace ImageProcessing.Core {
     public class ImageData {
         private Bitmap _bitmap;
 

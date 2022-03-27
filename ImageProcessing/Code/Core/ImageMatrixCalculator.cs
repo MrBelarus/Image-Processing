@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace ImageProcessing.Code.Core {
+namespace ImageProcessing.Core {
     class ImageMatrixCalculator {
         private static int[] pixels;
         private static int imgWidth;
@@ -153,7 +153,7 @@ namespace ImageProcessing.Code.Core {
         }
 
         private static void CheckForMinDistance(int x, int y, int offsetX, int offsetY) {
-            int pxlValue = pixels[x + (y + offsetY) * imgWidth + offsetX];
+            int pxlValue = pixels[x + offsetX + (y + offsetY) * imgWidth];
             if (pxlValue != lookingFor) {
                 return;
             }

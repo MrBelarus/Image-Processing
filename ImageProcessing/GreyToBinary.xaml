@@ -1,0 +1,15 @@
+﻿<Window x:Class="ImageProcessing.GreyToBinarySettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageProcessing"
+        mc:Ignorable="d"
+        Title="GreyToBinary" Height="110" Width="500">
+    <Grid>
+        <CheckBox x:Name="ignoreAlpha" Content="Ignore Alpha" HorizontalAlignment="Left" VerticalAlignment="Top" Height="22" Width="130" Background="#FF8DFF8D" Margin="74,25,0,0"/>
+        <Button x:Name="btnContinue" Click="Continue_Click" Content="Continue" HorizontalAlignment="Center" Margin="0,64,0,0" VerticalAlignment="Top"/>
+        <Label Content="Threshold" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalAlignment="Top" Height="24" FontWeight="Bold" FontStyle="Italic"/>
+        <TextBox x:Name="thresholdValue" HorizontalAlignment="Left" Margin="10,24,0,0" Text="128" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" TextAlignment="Center"/>
+    </Grid>
+</Window>

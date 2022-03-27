@@ -2,7 +2,7 @@
 using System;
 using System.Drawing;
 
-namespace ImageProcessing.Code.Core {
+namespace ImageProcessing.Core.Processers {
     class TestProcesser : ImageProcesser {
         public override ImageData Process(ImageData image) {
             switch (image.ColorDepth) {

@@ -27,6 +27,7 @@
                     </Button>
                     <CheckBox x:Name="btnConvertBinaryOriginal" Content="Convert to binary" HorizontalAlignment="Left" Margin="500,430,0,0" VerticalAlignment="Top" Height="22" Width="130" Background="#FF8DFF8D"/>
                     <ComboBox x:Name="performDropMenu" HorizontalAlignment="Left" Margin="202,421,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="btnCopyProcessedToOriginal" Click="OnBtnCopyToOriginalClick" Content="Save to original" HorizontalAlignment="Left" Margin="630,419,0,0" VerticalAlignment="Top" Height="35" Width="140" Background="#FFB3FFA7"/>
 
                     <StackPanel x:Name="pnlWorkSpaceImage" Margin="10,10,397,61">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">

@@ -1,5 +1,5 @@
 ﻿
-namespace ImageProcessing.Code.Utils {
+namespace ImageProcessing.Utils {
     class MathModule {
         public static float Lerp(float start, float end, float i) {
             return start + (end - start) * i;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ImageProcessing.Code.Core {
+namespace ImageProcessing.Core {
     class FileManager {
         public static void SaveImageMatrixTxt(string path, int[] array, int width, int height) {
             StringBuilder builder = new StringBuilder();

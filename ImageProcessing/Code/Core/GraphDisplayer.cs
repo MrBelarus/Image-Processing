@@ -6,7 +6,7 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
 
-namespace ImageProcessing.Code.Core {
+namespace ImageProcessing.Core {
     class GraphDisplayer {
         public Plot Plot { get; private set; }
         public string Title { get; private set; }

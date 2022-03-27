@@ -1,5 +1,4 @@
-﻿using ImageProcessing.Code.Core;
-using ImageProcessing.Code.Utils;
+﻿using ImageProcessing.Core;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -74,6 +73,11 @@ namespace ImageProcessing.Utils {
             return Image.GetPixelFormatSize(bitmap.PixelFormat);
         }
 
+        /// <summary>
+        /// Convert binary image to grey 24bit (manhattan distance)
+        /// </summary>
+        /// <param name="original">image to convert</param>
+        /// <returns>New instance of ImageData with 24bit grayscale</returns>
         public static ImageData Convert1BitToGray24Bit(ImageData original) {
             int[] pixelValues = ImageMatrixCalculator.ConvertDistanceToPixelGreyValues(
                                 ImageMatrixCalculator.GetManhattanDistanceMatrix(original));
@@ -92,7 +96,11 @@ namespace ImageProcessing.Utils {
             return data;
         }
 
-        public static ImageData ConvertToBinary(ImageData original, bool ignoreAlpha) {
+        /// <summary>
+        /// Convert image to binary
+        /// <paramref name="threshold">0-255 value</paramref>
+        /// </summary>
+        public static ImageData ConvertToBinary(ImageData original, bool ignoreAlpha, int threshold) {
             Bitmap newBitMap = new Bitmap(original.Width, original.Height,
                 PixelFormat.Format1bppIndexed);
             ImageData result = new ImageData(newBitMap);
@@ -102,8 +110,9 @@ namespace ImageProcessing.Utils {
             if (ignoreAlpha) {
                 clrDepth = MathModule.Clamp(original.ColorDepth, 1, 24);
             }
-             
-            int t = (1 << (clrDepth - 1)) / 2;
+
+            int maxPixelValue = 1 << (clrDepth - 1);
+            int t = (int)(maxPixelValue * ((float)threshold / 255));
 
             int[] oldPixels = original.GetPixels();
 

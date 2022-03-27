@@ -1,4 +1,5 @@
-﻿using ImageProcessing.Code.Core;
+﻿using ImageProcessing.Core;
+using ImageProcessing.Core.Processers;
 using ImageProcessing.Utils;
 using Microsoft.Win32;
 using System;
@@ -8,15 +9,20 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Dynamic;
 using System.Collections.Generic;
-using ImageProcessing.Core;
 
 namespace ImageProcessing {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+        public static MainWindow instance;
+
         private ImageData imgOriginal;
+        public ImageData ImageOriginal => imgOriginal;
+
         private ImageData imgProcessed;
+        public ImageData ImageProcessed => imgProcessed;
+
         private ImageProcesser imgProcesser;
         private GraphDisplayer graphDisplayer;
 
@@ -30,12 +36,15 @@ namespace ImageProcessing {
 
         readonly string[] matrixPerformOperations = new string[] {
             "Convert to grey",
+            "Convert to binary",
+            "Invert colors"
         };
 
         public MainWindow() {
             InitializeComponent();
-            InitDropDownMenu(matrixDropMenu, matrixDisplayOperations);
-            InitDropDownMenu(performDropMenu, matrixPerformOperations);
+            UI_Utility.InitComboBoxMenu(matrixDropMenu, matrixDisplayOperations);
+            UI_Utility.InitComboBoxMenu(performDropMenu, matrixPerformOperations);
+            instance = this;
 
             imageMatrix.IsReadOnly = true;
             graphDisplayer = new GraphDisplayer(Graph);
@@ -44,25 +53,38 @@ namespace ImageProcessing {
             //imgProcesser = new TestProcesser();
         }
 
-        private void InitDropDownMenu(ComboBox menu, string[] items) {
-            foreach (string item in items) {
-                menu.Items.Add(item);
-            }
-            menu.SelectedIndex = 0;
-        }
-
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
             if (imgOriginal != null && imgProcesser != null) {
                 switch (performDropMenu.SelectedItem) {
-                    default:
-                        imgProcessed = ImageUtility.Convert1BitToGray24Bit(imgOriginal);
+                    case "Convert to grey":
+                        imgProcesser = new ConvertToGrey();
+                        break;
+                    case "Convert to binary":
+                        imgProcesser = new ConvertToBinary();
+                        break;
+                    case "Invert colors":
+                        imgProcesser = new InvertColor();
                         break;
                 }
-                //imgProcessed = imgProcesser.Process(new ImageData(imgOriginal));
-                workSpaceImage.Source = imgProcessed.GetBitmapImage();
-                imageCanvas.Width = imgOriginal.Width;
-                imageCanvas.Height = imgOriginal.Height;
+
+                try {
+                    imgProcessed = imgProcesser.Process(new ImageData(imgOriginal));
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                UpdateProcessedImageUI(imgProcessed);
             }
+        }
+
+        private void OnBtnCopyToOriginalClick(object sender, RoutedEventArgs e) {
+            if (imgProcessed == null) {
+                MessageBox.Show("Can't copy processed image to replace original - it's null!", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            UpdateOriginalImageUI(imgProcessed);
         }
 
         #region MenuBarActions
@@ -118,10 +140,24 @@ namespace ImageProcessing {
         }
         #endregion
 
+        public void UpdateProcessedImageUI(ImageData image) {
+            imgProcessed = image;
+            workSpaceImage.Source = image.GetBitmapImage();
+            imageCanvas.Width = image.Width;
+            imageCanvas.Height = image.Height;
+        }
+
+        public void UpdateOriginalImageUI(ImageData image) {
+            imgOriginal = image;
+            workSpaceImage_original.Source = image.GetBitmapImage();
+            imageCanvas_original.Width = image.Width;
+            imageCanvas_original.Height = image.Height;
+        }
+
         private void btnMatrixDisplay_Click(object sender, RoutedEventArgs e) {
             ImageData image = (bool)btnMatrixToggle.IsChecked ? imgOriginal : imgProcessed;
 
-            if(image == null) {
+            if (image == null) {
                 return;
             }
 
@@ -169,7 +205,7 @@ namespace ImageProcessing {
                 for (int x = 0; x < width; x++) {
                     ((IDictionary<string, object>)row)[labels[x]] = matrix[y * width + x];
                 }
-                
+
                 imageMatrix.Items.Add(row);
             }
         }
