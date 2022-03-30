@@ -1,11 +1,11 @@
 ﻿using ImageProcessing.Utils;
 
 namespace ImageProcessing.Core.Processers {
-    public class ConvertToBinary : ImageProcesser {
+    public class ConvertToBinaryThreshold : ImageProcesser {
         private int _threshold = 128;
         private bool _ignoreAlpha = true;
 
-        public ConvertToBinary() {
+        public ConvertToBinaryThreshold() {
             GreyToBinarySettingsWindow settingsWindow = new GreyToBinarySettingsWindow();
             settingsWindow.ShowDialog();
 
@@ -16,9 +16,7 @@ namespace ImageProcessing.Core.Processers {
         }
 
         public override ImageData Process(ImageData image) {
-            if (_threshold == 128) {
-                image = ImageUtility.ConvertToBinary(image, _ignoreAlpha);
-            }
+            image = ImageUtility.ConvertToBinary(image, _ignoreAlpha, _threshold);
             return image;
         }
     }

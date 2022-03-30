@@ -36,7 +36,8 @@ namespace ImageProcessing {
 
         readonly string[] matrixPerformOperations = new string[] {
             "Convert to grey",
-            "Convert to binary",
+            "Convert to binary threshold",
+            "Convert to binary S9",
             "Invert colors"
         };
 
@@ -59,8 +60,11 @@ namespace ImageProcessing {
                     case "Convert to grey":
                         imgProcesser = new ConvertToGrey();
                         break;
-                    case "Convert to binary":
-                        imgProcesser = new ConvertToBinary();
+                    case "Convert to binary threshold":
+                        imgProcesser = new ConvertToBinaryThreshold();
+                        break;
+                    case "Convert to binary S9":
+                        imgProcesser = new ConvertToBinaryS9();
                         break;
                     case "Invert colors":
                         imgProcesser = new InvertColor();
@@ -99,7 +103,7 @@ namespace ImageProcessing {
                 //load & remember bitmap
                 imgOriginal = new ImageData(openFileDialog.FileName);
                 if (imgOriginal.ColorDepth != 1 && (bool)btnConvertBinaryOriginal.IsChecked) {
-                    imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true);
+                    imgOriginal = new ConvertToBinaryThreshold().Process(imgOriginal);
                 }
 
                 if (imgOriginal == null) {
@@ -141,6 +145,9 @@ namespace ImageProcessing {
         #endregion
 
         public void UpdateProcessedImageUI(ImageData image) {
+            if (image == null) {
+                return;
+            }
             imgProcessed = image;
             workSpaceImage.Source = image.GetBitmapImage();
             imageCanvas.Width = image.Width;

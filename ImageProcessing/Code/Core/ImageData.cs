@@ -275,10 +275,10 @@ namespace ImageProcessing.Core {
 
         public void ApplyChanges(PixelFormat format) {
             //TODO: test format
-            _bitmap = ImageUtility.BitmapFromBytes(imgBytes, Width, Height, format);
+            _bitmap = ImageUtility.BitmapFromBytes(ImageBytes, Width, Height, format);
         }
         public void ApplyChanges() {
-            _bitmap = ImageUtility.BitmapFromBytes(imgBytes, Width, Height, _bitmap.PixelFormat);
+            _bitmap = ImageUtility.BitmapFromBytes(ImageBytes, Width, Height, _bitmap.PixelFormat);
         }
         public void DiscardChanges(PixelFormat format) {
             //TODO: test format

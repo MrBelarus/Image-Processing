@@ -96,11 +96,27 @@ namespace ImageProcessing.Utils {
             return data;
         }
 
+        //public static ImageData Convert24BitTo8BitGrey(ImageData original) {
+        //    int[] pixelValues = original.GetPixels();
+        //    Bitmap bitmap =
+        //        new Bitmap(original.Width, original.Height, PixelFormat.Format8bppIndexed);
+        //    ImageData data = new ImageData(bitmap);
+        //    for (int y = 0; y < data.Height; y++) {
+        //        for (int x = 0; x < data.Width; x++) {
+        //            int pxl = pixelValues[y * data.Width + x];
+        //            data.SetPixel(x, y, pxl & 0x000000ff);
+        //        }
+        //    }
+        //    data.ApplyChanges();
+
+        //    return data;
+        //}
+
         /// <summary>
         /// Convert image to binary
         /// <paramref name="threshold">0-255 value</paramref>
         /// </summary>
-        public static ImageData ConvertToBinary(ImageData original, bool ignoreAlpha, int threshold) {
+        public static ImageData ConvertToBinary(ImageData original, bool ignoreAlpha, int threshold = 128) {
             Bitmap newBitMap = new Bitmap(original.Width, original.Height,
                 PixelFormat.Format1bppIndexed);
             ImageData result = new ImageData(newBitMap);
