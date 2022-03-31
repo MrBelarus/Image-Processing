@@ -94,11 +94,11 @@ namespace ImageProcessing.Core {
                     return (imgBytes[offsetY + offsetX] << 8) + imgBytes[offsetY + offsetX + 1];
                 case 24:
                     offsetX = 3 * x;
-                    return (imgBytes[offsetY + offsetX] << 16) + (imgBytes[offsetY + offsetX + 1] << 8) + 
+                    return (imgBytes[offsetY + offsetX] << 16) + (imgBytes[offsetY + offsetX + 1] << 8) +
                            imgBytes[offsetY + offsetX + 2];
                 case 32:
                     offsetX = 4 * x;
-                    return (imgBytes[offsetY + offsetX] << 24) + (imgBytes[offsetY + offsetX + 1] << 16) + 
+                    return (imgBytes[offsetY + offsetX] << 24) + (imgBytes[offsetY + offsetX + 1] << 16) +
                            (imgBytes[offsetY + offsetX + 2] << 8) + imgBytes[offsetY + offsetX + 3];
             }
 
@@ -108,8 +108,8 @@ namespace ImageProcessing.Core {
         public int[] GetPixels() {
             int[] pixels = new int[Width * Height];
 
-            for(int y = 0; y < Height; y++) {
-                for(int x = 0; x < Width; x++) {
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
                     pixels[y * Width + x] = GetPixel(x, y);
                 }
             }
@@ -132,11 +132,23 @@ namespace ImageProcessing.Core {
         public string[] GetPixelsRGB() {
             string[] pixels = new string[Width * Height];
 
-            for (int y = 0; y < Height; y++) {
-                for (int x = 0; x < Width; x++) {
-                    int pxl = GetPixel(x, y);
-                    pixels[y * Width + x] = ((pxl & 0xff0000) >> 16).ToString() + ", " + 
-                                            ((pxl & 0x00ff00) >> 8).ToString() + ", "+ (pxl & 0x0000ff).ToString();
+            if (BitConverter.IsLittleEndian) {
+                for (int y = 0; y < Height; y++) {
+                    for (int x = 0; x < Width; x++) {
+                        int pxl = GetPixel(x, y);
+                        //BGRA
+                        pixels[y * Width + x] = ((pxl & 0x0000ff00) >> 8).ToString() + ", " +
+                                                ((pxl & 0x00ff0000) >> 16).ToString() + ", " + ((pxl & 0xff000000) >> 24).ToString();
+                    }
+                }
+            }
+            else {
+                for (int y = 0; y < Height; y++) {
+                    for (int x = 0; x < Width; x++) {
+                        int pxl = GetPixel(x, y);
+                        pixels[y * Width + x] = ((pxl & 0x00ff0000) >> 16).ToString() + ", " +
+                                                ((pxl & 0x0000ff00) >> 8).ToString() + ", " + (pxl & 0x000000ff).ToString();
+                    }
                 }
             }
 
