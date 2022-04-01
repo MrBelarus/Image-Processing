@@ -64,6 +64,12 @@ namespace ImageProcessing.Core {
             return ImageUtility.BitmapToImageSource(_bitmap);
         }
 
+        /// <summary>
+        /// Get pixel value
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>pixel value [RGB/ARGB if 24/32bit]</returns>
         public int GetPixel(int x, int y) {
             if (_bitmap == null) {
                 throw new Exception("Bitmap is null, can't get pixel!");
@@ -91,13 +97,24 @@ namespace ImageProcessing.Core {
                     return imgBytes[offsetY + offsetX];
                 case 16:
                     offsetX = 2 * x;
+                    if (BitConverter.IsLittleEndian) {
+                        return (imgBytes[offsetY + offsetX + 1] << 8) + imgBytes[offsetY + offsetX];
+                    }
                     return (imgBytes[offsetY + offsetX] << 8) + imgBytes[offsetY + offsetX + 1];
                 case 24:
                     offsetX = 3 * x;
+                    if (BitConverter.IsLittleEndian) {
+                        return (imgBytes[offsetY + offsetX + 2] << 16) +
+                           (imgBytes[offsetY + offsetX + 1] << 8) + imgBytes[offsetY + offsetX];
+                    }
                     return (imgBytes[offsetY + offsetX] << 16) + (imgBytes[offsetY + offsetX + 1] << 8) +
                            imgBytes[offsetY + offsetX + 2];
                 case 32:
                     offsetX = 4 * x;
+                    if (BitConverter.IsLittleEndian) {
+                        return (imgBytes[offsetY + offsetX + 3] << 24) + (imgBytes[offsetY + offsetX + 2] << 16) +
+                           (imgBytes[offsetY + offsetX + 1] << 8) + imgBytes[offsetY + offsetX];
+                    }
                     return (imgBytes[offsetY + offsetX] << 24) + (imgBytes[offsetY + offsetX + 1] << 16) +
                            (imgBytes[offsetY + offsetX + 2] << 8) + imgBytes[offsetY + offsetX + 3];
             }
@@ -136,9 +153,9 @@ namespace ImageProcessing.Core {
                 for (int y = 0; y < Height; y++) {
                     for (int x = 0; x < Width; x++) {
                         int pxl = GetPixel(x, y);
-                        //BGRA
-                        pixels[y * Width + x] = ((pxl & 0x0000ff00) >> 8).ToString() + ", " +
-                                                ((pxl & 0x00ff0000) >> 16).ToString() + ", " + ((pxl & 0xff000000) >> 24).ToString();
+                        //ARGB
+                        pixels[y * Width + x] = ((pxl & 0x00ff0000) >> 16).ToString() + ", " +
+                                                ((pxl & 0x0000ff00) >> 8).ToString() + ", " + (pxl & 0x000000ff).ToString();
                     }
                 }
             }
@@ -155,6 +172,12 @@ namespace ImageProcessing.Core {
             return pixels;
         }
 
+        /// <summary>
+        /// Set pixel value
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="value">if 24/32bit format is RGB/ARGB</param>
         public void SetPixel(int x, int y, int value) {
             if (_bitmap == null) {
                 throw new Exception("Bitmap is null, can't set pixel!");
@@ -194,21 +217,42 @@ namespace ImageProcessing.Core {
                     break;
                 case 16:
                     offsetX = 2 * x;
-                    imgBytes[offsetY + offsetX] = (byte)(value >> 8);
-                    imgBytes[offsetY + offsetX + 1] = (byte)(value & 0xff);
+                    if (BitConverter.IsLittleEndian) {
+                        imgBytes[offsetY + offsetX] =     (byte)(value & 0xff);
+                        imgBytes[offsetY + offsetX + 1] = (byte)(value >> 8);
+                    }
+                    else {
+                        imgBytes[offsetY + offsetX] =     (byte)(value >> 8);
+                        imgBytes[offsetY + offsetX + 1] = (byte)(value & 0xff);
+                    }
                     break;
                 case 24:
                     offsetX = 3 * x;
-                    imgBytes[offsetY + offsetX] = (byte)((value & 0xff0000) >> 16);
-                    imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff00) >> 8);
-                    imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x0000ff);
+                    if (BitConverter.IsLittleEndian) {
+                        imgBytes[offsetY + offsetX] =     (byte) (value & 0x0000ff);
+                        imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff00) >> 8);
+                        imgBytes[offsetY + offsetX + 2] = (byte)((value & 0xff0000) >> 16);
+                    }
+                    else {
+                        imgBytes[offsetY + offsetX] =     (byte)((value & 0xff0000) >> 16);
+                        imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff00) >> 8);
+                        imgBytes[offsetY + offsetX + 2] = (byte) (value & 0x0000ff);
+                    }
                     break;
                 case 32:
                     offsetX = 4 * x;
-                    imgBytes[offsetY + offsetX] = (byte)((value & 0xff000000) >> 24);
-                    imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff0000) >> 16);
-                    imgBytes[offsetY + offsetX + 2] = (byte)((value & 0x0000ff00) >> 8);
-                    imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x000000ff);
+                    if (BitConverter.IsLittleEndian) {
+                        imgBytes[offsetY + offsetX] =     (byte) (value & 0x000000ff);
+                        imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x0000ff00) >> 8);
+                        imgBytes[offsetY + offsetX + 2] = (byte)((value & 0x00ff0000) >> 16);
+                        imgBytes[offsetY + offsetX + 3] = (byte)((value & 0xff000000) >> 24);
+                    }
+                    else {
+                        imgBytes[offsetY + offsetX] =     (byte)((value & 0xff000000) >> 24);
+                        imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff0000) >> 16);
+                        imgBytes[offsetY + offsetX + 2] = (byte)((value & 0x0000ff00) >> 8);
+                        imgBytes[offsetY + offsetX + 3] = (byte) (value & 0x000000ff);
+                    }
                     break;
             }
         }

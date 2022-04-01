@@ -1,17 +1,9 @@
-﻿using ImageProcessing.Core;
-using ImageProcessing.Core.Processers;
-using ImageProcessing.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace ImageProcessing.Core.Processers {
     public class ConvertToBinaryS9 : ImageProcesser {
         public override ImageData Process(ImageData image) {
-            //if (image.ColorDepth > 8) {
-            //    image = ImageUtility.Convert24BitTo8BitGrey(image);
-            //}
-            if (image.ColorDepth == 32) {
+            int imgClrDepth = image.ColorDepth;
+            if (imgClrDepth == 32) {
                 //null alpha
                 for (int y = 0; y < image.Height; y++) {
                     for (int x = 0; x < image.Width; x++) {

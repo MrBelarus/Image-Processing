@@ -96,6 +96,11 @@ namespace ImageProcessing.Utils {
             return data;
         }
 
+        public static ImageData Get1BitImageEmpty(ImageData source) {
+            Bitmap _1bitmap = new Bitmap(source.Width, source.Height, PixelFormat.Format1bppIndexed);
+            return new ImageData(source);
+        }
+
         //public static ImageData Convert24BitTo8BitGrey(ImageData original) {
         //    int[] pixelValues = original.GetPixels();
         //    Bitmap bitmap =
