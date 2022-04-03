@@ -122,6 +122,10 @@ namespace ImageProcessing.Core {
             return 1;
         }
 
+        /// <summary>
+        /// Get pixel values
+        /// </summary>
+        /// <returns>pixel values [RGB/ARGB if 24/32bit]</returns>
         public int[] GetPixels() {
             int[] pixels = new int[Width * Height];
 

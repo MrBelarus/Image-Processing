@@ -132,7 +132,7 @@ namespace ImageProcessing.Utils {
                 clrDepth = MathModule.Clamp(original.ColorDepth, 1, 24);
             }
 
-            int maxPixelValue = 1 << (clrDepth - 1);
+            int maxPixelValue = GetMaxPixelValue(clrDepth);
             int t = (int)(maxPixelValue * ((float)threshold / 255));
 
             int[] oldPixels = original.GetPixels();
@@ -153,6 +153,24 @@ namespace ImageProcessing.Utils {
             result.ApplyChanges();
 
             return result;
+        }
+
+        public static int GetMaxPixelValue(int clrDepth) {
+            switch (clrDepth) {
+                case 1:
+                    return 1;
+                case 4:
+                    return 15;
+                case 8:
+                    return 255;
+                case 16:
+                    return 65_535;
+                case 24:
+                    return 16_777_215;
+                case 32:
+                    return 2_147_483_647;
+            }
+            return int.MaxValue;
         }
     }
 }

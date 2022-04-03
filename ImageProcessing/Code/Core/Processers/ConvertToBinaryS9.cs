@@ -22,7 +22,7 @@ namespace ImageProcessing.Core.Processers {
                     int i = y * imgWidth + x;
                     int pixel = pxls[i];
                     image.SetPixel(x, y,
-                        ((a8_matrix[i] + pixel) / 9) < pixel ? 0x00ffffff : 0);
+                        ((a8_matrix[i] + pixel) / 9) < pixel ? 0 : 0x00ffffff);
                 }
             }
             image.ApplyChanges();
