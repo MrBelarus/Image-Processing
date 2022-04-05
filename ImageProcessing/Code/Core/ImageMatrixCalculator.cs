@@ -18,21 +18,25 @@ namespace ImageProcessing.Core {
             //first and last strings
             int lowestStringStartInd = width * (height - 1);
             for (int x = 1; x < width - 1; x++) {
-                a8matrix[x] = pixels[x - 1] + pixels[x + 1] + pixels[width + x]
-                    + pixels[width + x - 1] + pixels[width + x + 1];
+                a8matrix[x] = 
+                    pixels[x - 1] + pixels[x + 1] + pixels[width + x] +
+                    pixels[width + x - 1] + pixels[width + x + 1];
 
-                a8matrix[lowestStringStartInd + x] = pixels[lowestStringStartInd + x - 1] +
+                a8matrix[lowestStringStartInd + x] = 
+                    pixels[lowestStringStartInd + x - 1] +
                     pixels[lowestStringStartInd + x + 1] + pixels[lowestStringStartInd + x - width] +
                     pixels[lowestStringStartInd - width + x - 1] + pixels[lowestStringStartInd - width + x + 1];
             }
 
             //first and last columns
             for (int y = 1; y < height - 1; y++) {
-                a8matrix[width * y] = pixels[width * y + 1] +
+                a8matrix[width * y] = 
+                    pixels[width * y + 1] +
                     pixels[width * (y - 1)] + pixels[width * (y + 1)] +
                     pixels[width * (y - 1) + 1] + pixels[width * (y + 1) + 1];
 
-                a8matrix[width * (y + 1) - 1] = pixels[width * (y + 1) - 2] +
+                a8matrix[width * (y + 1) - 1] = 
+                    pixels[width * (y + 1) - 2] +
                     pixels[width * y - 1] + pixels[width * (y + 2) - 1] +
                     pixels[width * (y + 2) - 2] + pixels[width * y - 2];
             }
@@ -40,7 +44,8 @@ namespace ImageProcessing.Core {
             //main body
             for (int y = 1; y < imageData.Height - 1; y++) {
                 for (int x = 1; x < width - 1; x++) {
-                    a8matrix[y * width + x] = pixels[(y - 1) * width + x] + pixels[(y + 1) * width + x] +
+                    a8matrix[y * width + x] = 
+                        pixels[(y - 1) * width + x] + pixels[(y + 1) * width + x] +
                         pixels[y * width + x - 1] + pixels[y * width + x + 1] +
                         pixels[(y + 1) * width + x + 1] + pixels[(y + 1) * width + x - 1] +
                         pixels[(y - 1) * width + x + 1] + pixels[(y - 1) * width + x - 1];

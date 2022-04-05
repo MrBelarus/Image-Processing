@@ -20,16 +20,20 @@
         <TabControl>
             <TabItem Header="workspace">
                 <Grid>
-                    <Button Name="btnPerform" Click="OnBtnPerformClick" Content="Perform Task" HorizontalAlignment="Center" Margin="0,419,0,0" VerticalAlignment="Top" Height="35" Width="140">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="74*"/>
+                        <ColumnDefinition Width="323*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="btnPerform" Click="OnBtnPerformClick" Content="Perform Task" HorizontalAlignment="Left" Margin="179,419,0,0" VerticalAlignment="Top" Height="35" Width="140" Grid.Column="1">
                         <Button.Background>
                             <SolidColorBrush Color="#FFB3FFA7" />
                         </Button.Background>
                     </Button>
-                    <CheckBox x:Name="btnConvertBinaryOriginal" Content="Convert to binary" HorizontalAlignment="Left" Margin="500,430,0,0" VerticalAlignment="Top" Height="22" Width="130" Background="#FF8DFF8D"/>
-                    <ComboBox x:Name="performDropMenu" HorizontalAlignment="Left" Margin="202,421,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Button x:Name="btnCopyProcessedToOriginal" Click="OnBtnCopyToOriginalClick" Content="Save to original" HorizontalAlignment="Left" Margin="630,419,0,0" VerticalAlignment="Top" Height="35" Width="140" Background="#FFB3FFA7"/>
+                    <CheckBox x:Name="btnConvertBinaryOriginal" Content="Convert to binary" HorizontalAlignment="Left" Margin="352,430,0,0" VerticalAlignment="Top" Height="22" Width="130" Background="#FF8DFF8D" Grid.Column="1"/>
+                    <ComboBox x:Name="performDropMenu" HorizontalAlignment="Left" Margin="54,421,0,0" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                    <Button x:Name="btnCopyProcessedToOriginal" Click="OnBtnCopyToOriginalClick" Content="Save to original" HorizontalAlignment="Left" Margin="482,419,0,0" VerticalAlignment="Top" Height="35" Width="140" Background="#FFB3FFA7" Grid.Column="1"/>
 
-                    <StackPanel x:Name="pnlWorkSpaceImage" Margin="10,10,397,61">
+                    <StackPanel x:Name="pnlWorkSpaceImage" Margin="10,10,397,61" Grid.ColumnSpan="2">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">
                             <Canvas x:Name="imageCanvas" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}">
                                 <Canvas.Background>
@@ -42,7 +46,7 @@
                             </Canvas>
                         </ScrollViewer>
                     </StackPanel>
-                    <StackPanel x:Name="pnlWorkSpaceImage_original" Margin="397,10,10,61">
+                    <StackPanel x:Name="pnlWorkSpaceImage_original" Margin="249,10,10,61" Grid.Column="1">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">
                             <Canvas x:Name="imageCanvas_original" Width="{Binding ActualWidth, ElementName=workSpaceImage_original}" Height="{Binding ActualHeight, ElementName=workSpaceImage_original}" >
                                 <Canvas.Background>
@@ -75,9 +79,8 @@
                         </oxy:Plot>
                     </ScrollViewer>
 
-
-                    <ComboBox Visibility="Hidden" Width="120" Margin="34,417,640,0"/>
                     <Button x:Name="btnGraphDisplay" Click="btnGraphDisplay_Click" Content="Display" HorizontalAlignment="Left" Margin="159,397,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="#FF8DFF8D"/>
+                    <ComboBox x:Name="graphDropMenu" HorizontalAlignment="Left" Margin="34,397,0,0" VerticalAlignment="Top" Width="120"/>
                 </Grid>
             </TabItem>
         </TabControl>

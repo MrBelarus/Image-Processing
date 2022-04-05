@@ -41,21 +41,24 @@ namespace ImageProcessing {
             "Invert colors"
         };
 
+        readonly string[] graphDisplayOptions = new string[] {
+            "Manhattan Distance",
+            "Brightness",
+        };
+
         public MainWindow() {
             InitializeComponent();
             UI_Utility.InitComboBoxMenu(matrixDropMenu, matrixDisplayOperations);
             UI_Utility.InitComboBoxMenu(performDropMenu, matrixPerformOperations);
+            UI_Utility.InitComboBoxMenu(graphDropMenu, graphDisplayOptions);
             instance = this;
 
             imageMatrix.IsReadOnly = true;
             graphDisplayer = new GraphDisplayer(Graph);
-
-            imgProcesser = new InvertColor();
-            //imgProcesser = new TestProcesser();
         }
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
-            if (imgOriginal != null && imgProcesser != null) {
+            if (imgOriginal != null) {
                 switch (performDropMenu.SelectedItem) {
                     case "Convert to grey":
                         imgProcesser = new ConvertToGrey();
@@ -84,7 +87,7 @@ namespace ImageProcessing {
 
         private void OnBtnCopyToOriginalClick(object sender, RoutedEventArgs e) {
             if (imgProcessed == null) {
-                MessageBox.Show("Can't copy processed image to replace original - it's null!", "Error", 
+                MessageBox.Show("Can't copy processed image to replace original - it's null!", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -218,8 +221,24 @@ namespace ImageProcessing {
         }
 
         private void btnGraphDisplay_Click(object sender, RoutedEventArgs e) {
-            var result = ImageMatrixCalculator.GetManhattanDistanceMatrix(imgOriginal);
-            graphDisplayer.DisplayColumnGraph(ImageMatrixCalculator.CalculateValuesFrequences(result));
+            if (imgOriginal == null) {
+                MessageBox.Show("Image original in null! Load it first!", 
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            List<OxyPlot.DataPoint> points = new List<OxyPlot.DataPoint>();
+            switch (graphDropMenu.SelectedItem.ToString()) {
+                case "Manhattan Distance":
+                    var result = ImageMatrixCalculator.GetManhattanDistanceMatrix(imgOriginal);
+                    points = ImageMatrixCalculator.CalculateValuesFrequences(result);
+                    break;
+                case "Brightness":
+                    
+                    break;
+            }
+            
+            graphDisplayer.DisplayColumnGraph(points);
         }
     }
 }
