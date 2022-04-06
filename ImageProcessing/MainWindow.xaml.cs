@@ -29,6 +29,9 @@ namespace ImageProcessing {
         readonly string[] matrixDisplayOperations = new string[] {
             "Pixels",
             "RGB",
+            "R",
+            "G",
+            "B",
             "A4 matrix",
             "A8 matrix",
             "Manhattan Distance",
@@ -178,6 +181,18 @@ namespace ImageProcessing {
                 case "RGB":
                     DisplayMatrix(image.GetPixelsRGB(), image.Width, image.Height);
                     break;
+                case "R":
+                    DisplayMatrix(imgOriginal.GetChannelValuesString(0x00ff0000, 16),
+                        image.Width, image.Height);
+                    break;
+                case "G":
+                    DisplayMatrix(imgOriginal.GetChannelValuesString(0x0000ff00, 8),
+                        image.Width, image.Height);
+                    break;
+                case "B":
+                    DisplayMatrix(imgOriginal.GetChannelValuesString(0x000000ff, 0),
+                        image.Width, image.Height);
+                    break;
                 case "A4 matrix":
                     DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(image),
                         image.Width, image.Height);
@@ -228,16 +243,17 @@ namespace ImageProcessing {
             }
 
             List<OxyPlot.DataPoint> points = new List<OxyPlot.DataPoint>();
+            int[] dataArray = null;
             switch (graphDropMenu.SelectedItem.ToString()) {
                 case "Manhattan Distance":
-                    var result = ImageMatrixCalculator.GetManhattanDistanceMatrix(imgOriginal);
-                    points = ImageMatrixCalculator.CalculateValuesFrequences(result);
+                    dataArray = ImageMatrixCalculator.GetManhattanDistanceMatrix(imgOriginal);
                     break;
                 case "Brightness":
-                    
+                    dataArray = imgOriginal.GetBrightnessArray();
                     break;
             }
-            
+
+            points = ImageMatrixCalculator.CalculateValuesFrequences(dataArray);
             graphDisplayer.DisplayColumnGraph(points);
         }
     }

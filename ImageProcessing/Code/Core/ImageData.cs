@@ -25,6 +25,7 @@ namespace ImageProcessing.Core {
         public int Height => _bitmap.Height;
         public PixelFormat PixelFormat => _bitmap.PixelFormat;
 
+        private int clrDepth;
         public int ColorDepth {
             get {
                 if (_bitmap == null) {
@@ -58,6 +59,7 @@ namespace ImageProcessing.Core {
             Tuple<byte[], int> result = ImageUtility.BitmapToBytes(_bitmap, format);
             imgBytes = result.Item1;
             stride = result.Item2;
+            clrDepth = ColorDepth;
         }
 
         public BitmapImage GetBitmapImage() {
@@ -79,7 +81,7 @@ namespace ImageProcessing.Core {
             int offsetX;
             int bitShift;
 
-            switch (ColorDepth) {
+            switch (clrDepth) {
                 case 1:
                     offsetX = x / 8; //every bit is a new pixel, so 1 byte has 8 pixels
                     bitShift = 7 - (x % 8);
@@ -153,23 +155,25 @@ namespace ImageProcessing.Core {
         public string[] GetPixelsRGB() {
             string[] pixels = new string[Width * Height];
 
-            if (BitConverter.IsLittleEndian) {
-                for (int y = 0; y < Height; y++) {
-                    for (int x = 0; x < Width; x++) {
-                        int pxl = GetPixel(x, y);
-                        //ARGB
-                        pixels[y * Width + x] = ((pxl & 0x00ff0000) >> 16).ToString() + ", " +
-                                                ((pxl & 0x0000ff00) >> 8).ToString() + ", " + (pxl & 0x000000ff).ToString();
-                    }
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    int pxl = GetPixel(x, y);
+                    //ARGB
+                    pixels[y * Width + x] = ((pxl & 0x00ff0000) >> 16).ToString() + ", " +
+                                            ((pxl & 0x0000ff00) >> 8).ToString() + ", " + (pxl & 0x000000ff).ToString();
                 }
             }
-            else {
-                for (int y = 0; y < Height; y++) {
-                    for (int x = 0; x < Width; x++) {
-                        int pxl = GetPixel(x, y);
-                        pixels[y * Width + x] = ((pxl & 0x00ff0000) >> 16).ToString() + ", " +
-                                                ((pxl & 0x0000ff00) >> 8).ToString() + ", " + (pxl & 0x000000ff).ToString();
-                    }
+
+            return pixels;
+        }
+
+        public string[] GetChannelValuesString(int mask, int rightShift) {
+            string[] pixels = new string[Width * Height];
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    int pxl = GetPixel(x, y);
+                    //ARGB
+                    pixels[y * Width + x] = ((pxl & mask) >> rightShift).ToString();
                 }
             }
 
@@ -191,7 +195,7 @@ namespace ImageProcessing.Core {
             int offsetX;
             byte imgByte;
 
-            switch (ColorDepth) {
+            switch (clrDepth) {
                 case 1:
                     offsetX = x / 8; //every bit is a new pixel, so 1 byte has 8 pixels
                     value = Math.Clamp(value, 0, 1);
@@ -222,47 +226,47 @@ namespace ImageProcessing.Core {
                 case 16:
                     offsetX = 2 * x;
                     if (BitConverter.IsLittleEndian) {
-                        imgBytes[offsetY + offsetX] =     (byte)(value & 0xff);
+                        imgBytes[offsetY + offsetX] = (byte)(value & 0xff);
                         imgBytes[offsetY + offsetX + 1] = (byte)(value >> 8);
                     }
                     else {
-                        imgBytes[offsetY + offsetX] =     (byte)(value >> 8);
+                        imgBytes[offsetY + offsetX] = (byte)(value >> 8);
                         imgBytes[offsetY + offsetX + 1] = (byte)(value & 0xff);
                     }
                     break;
                 case 24:
                     offsetX = 3 * x;
                     if (BitConverter.IsLittleEndian) {
-                        imgBytes[offsetY + offsetX] =     (byte) (value & 0x0000ff);
+                        imgBytes[offsetY + offsetX] = (byte)(value & 0x0000ff);
                         imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff00) >> 8);
                         imgBytes[offsetY + offsetX + 2] = (byte)((value & 0xff0000) >> 16);
                     }
                     else {
-                        imgBytes[offsetY + offsetX] =     (byte)((value & 0xff0000) >> 16);
+                        imgBytes[offsetY + offsetX] = (byte)((value & 0xff0000) >> 16);
                         imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff00) >> 8);
-                        imgBytes[offsetY + offsetX + 2] = (byte) (value & 0x0000ff);
+                        imgBytes[offsetY + offsetX + 2] = (byte)(value & 0x0000ff);
                     }
                     break;
                 case 32:
                     offsetX = 4 * x;
                     if (BitConverter.IsLittleEndian) {
-                        imgBytes[offsetY + offsetX] =     (byte) (value & 0x000000ff);
+                        imgBytes[offsetY + offsetX] = (byte)(value & 0x000000ff);
                         imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x0000ff00) >> 8);
                         imgBytes[offsetY + offsetX + 2] = (byte)((value & 0x00ff0000) >> 16);
                         imgBytes[offsetY + offsetX + 3] = (byte)((value & 0xff000000) >> 24);
                     }
                     else {
-                        imgBytes[offsetY + offsetX] =     (byte)((value & 0xff000000) >> 24);
+                        imgBytes[offsetY + offsetX] = (byte)((value & 0xff000000) >> 24);
                         imgBytes[offsetY + offsetX + 1] = (byte)((value & 0x00ff0000) >> 16);
                         imgBytes[offsetY + offsetX + 2] = (byte)((value & 0x0000ff00) >> 8);
-                        imgBytes[offsetY + offsetX + 3] = (byte) (value & 0x000000ff);
+                        imgBytes[offsetY + offsetX + 3] = (byte)(value & 0x000000ff);
                     }
                     break;
             }
         }
 
         public void SetPixel(int x, int y, Color color) {
-            switch (ColorDepth) {
+            switch (clrDepth) {
                 case 1:
                     //(depends on LUT!)
                     SetPixel(x, y, color == Color.Black ? 0 : 1);
@@ -286,7 +290,7 @@ namespace ImageProcessing.Core {
         }
 
         public Color GetColor(int x, int y) {
-            switch (ColorDepth) {
+            switch (clrDepth) {
                 case 1:
                     //(depends on LUT!)
                     return GetPixel(x, y) == 0 ? Color.Black : Color.White;
@@ -331,6 +335,21 @@ namespace ImageProcessing.Core {
             }
 
             return default;
+        }
+
+        public int GetBrightness(int x, int y) {
+            int pxlValue = GetPixel(x, y);
+            return (int)(_bitmap.GetPixel(x, y).GetBrightness() * 255);
+        }
+
+        public int[] GetBrightnessArray() {
+            int[] result = new int[Width * Height];
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    result[y * Width + x] = GetBrightness(x, y);
+                }
+            }
+            return result;
         }
 
         public void ApplyChanges(PixelFormat format) {

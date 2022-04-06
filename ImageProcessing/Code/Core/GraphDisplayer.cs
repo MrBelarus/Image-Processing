@@ -27,7 +27,7 @@ namespace ImageProcessing.Core {
         public void DisplayColumnGraph(IList<DataPoint> points) {
 
             List<ColumnItem> items = new List<ColumnItem>();
-            foreach(DataPoint point in points) {
+            foreach (DataPoint point in points) {
                 items.Add(new ColumnItem(point.Y));
             }
             var barSeries = new OxyPlot.Wpf.ColumnSeries {
@@ -51,7 +51,12 @@ namespace ImageProcessing.Core {
                 ItemsSource = axesItems,
             });
 
-            Plot.Width = 25 * points.Count;
+            if (points.Count < 5) {
+                Plot.Width = 150;
+            }
+            else {
+                Plot.Width = 25 * points.Count;
+            }
             Plot.InvalidatePlot(true);
         }
     }
