@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageProcessing"
         mc:Ignorable="d"
-        Title="InputValueDialog" Height="114" Width="272">
+        Title="InputValueDialog" Height="143" Width="272">
     <Grid>
         <Label Content="Value" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" HorizontalAlignment="Left" Margin="88,0,0,0" VerticalAlignment="Top" Height="40" FontWeight="Bold" FontStyle="Italic" FontSize="24"/>
-        <TextBox x:Name="inputValue" HorizontalAlignment="Left" Margin="105,0,0,0" Text="128" TextWrapping="Wrap" VerticalAlignment="Center" Width="47" TextAlignment="Center"/>
+        <TextBox x:Name="inputValue" HorizontalAlignment="Left" Margin="105,40,0,0" Text="128" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" TextAlignment="Center"/>
         <Button x:Name="btnContinue" Click="Continue_Click" Content="Continue" HorizontalAlignment="Left" Margin="102,63,0,0" VerticalAlignment="Top"/>
 
     </Grid>

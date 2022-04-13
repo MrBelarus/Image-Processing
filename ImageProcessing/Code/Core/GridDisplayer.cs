@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -22,6 +21,11 @@ namespace ImageProcessing.Code.Core {
         int width;
 
         private void HandleDoubleClick(object sender, MouseButtonEventArgs e) {
+            if (imageMatrix.CurrentColumn == null || imageMatrix.SelectedIndex < 0 ||
+                matrix == null) {
+                return;
+            }
+
             ExpandoObject selectedItem = imageMatrix.SelectedValue as ExpandoObject;
             int y = imageMatrix.SelectedIndex;
             int x = imageMatrix.CurrentColumn.DisplayIndex;
@@ -44,10 +48,15 @@ namespace ImageProcessing.Code.Core {
             imageMatrix.Columns.Clear();
             imageMatrix.Items.Clear();
 
-            this.width = width;
-            this.matrix = new int[matrix.Length];
-            for(int i = 0; i < matrix.Length; i++) {
-                this.matrix[i] = int.Parse(matrix[i].ToString());
+            try {
+                this.width = width;
+                this.matrix = new int[matrix.Length];
+                for (int i = 0; i < matrix.Length; i++) {
+                    this.matrix[i] = int.Parse(matrix[i].ToString());
+                }
+            }
+            catch (Exception e) {
+                this.matrix = null;
             }
 
             string[] labels = new string[width];

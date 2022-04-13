@@ -5,9 +5,6 @@ using Microsoft.Win32;
 using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Dynamic;
 using System.Collections.Generic;
 using ImageProcessing.Code.Core;
 
@@ -211,7 +208,6 @@ namespace ImageProcessing {
                         image.Width, image.Height);
                     break;
             }
-
         }
 
         private void btnMatrixApply_Click(object sender, RoutedEventArgs e) {

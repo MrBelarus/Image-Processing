@@ -7,8 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
 namespace ImageProcessing.Utils {
-    class ImageUtility
-        {
+    class ImageUtility {
         public static Bitmap LoadImage(string path) {
             try {
                 return new Bitmap(path);
@@ -98,7 +97,7 @@ namespace ImageProcessing.Utils {
 
         public static ImageData Get1BitImageEmpty(ImageData source) {
             Bitmap _1bitmap = new Bitmap(source.Width, source.Height, PixelFormat.Format1bppIndexed);
-            return new ImageData(source);
+            return new ImageData(_1bitmap);
         }
 
         //public static ImageData Convert24BitTo8BitGrey(ImageData original) {
