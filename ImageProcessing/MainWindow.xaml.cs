@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Dynamic;
 using System.Collections.Generic;
+using ImageProcessing.Code.Core;
 
 namespace ImageProcessing {
     /// <summary>
@@ -25,6 +26,7 @@ namespace ImageProcessing {
 
         private ImageProcesser imgProcesser;
         private GraphDisplayer graphDisplayer;
+        private GridDisplayer gridDisplayer;
 
         readonly string[] matrixDisplayOperations = new string[] {
             "Pixels",
@@ -56,8 +58,8 @@ namespace ImageProcessing {
             UI_Utility.InitComboBoxMenu(graphDropMenu, graphDisplayOptions);
             instance = this;
 
-            imageMatrix.IsReadOnly = true;
             graphDisplayer = new GraphDisplayer(Graph);
+            gridDisplayer = new GridDisplayer(imageMatrix);
         }
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
@@ -78,7 +80,10 @@ namespace ImageProcessing {
                 }
 
                 try {
-                    imgProcessed = imgProcesser.Process(new ImageData(imgOriginal));
+                    ImageData img = imgProcesser.Process(new ImageData(imgOriginal));
+                    if (img == null)
+                        return;
+                    imgProcessed = img;
                 }
                 catch (Exception ex) {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -176,64 +181,69 @@ namespace ImageProcessing {
 
             switch (matrixDropMenu.SelectedItem.ToString()) {
                 case "Pixels":
-                    DisplayMatrix(image.GetBinaryPixelsInverted(), image.Width, image.Height);
+                    gridDisplayer.DisplayMatrix(image.GetBinaryPixelsInverted(), image.Width, image.Height);
                     break;
                 case "RGB":
-                    DisplayMatrix(image.GetPixelsRGB(), image.Width, image.Height);
+                    gridDisplayer.DisplayMatrix(image.GetPixelsRGB(), image.Width, image.Height);
                     break;
                 case "R":
-                    DisplayMatrix(imgOriginal.GetChannelValuesString(0x00ff0000, 16),
+                    gridDisplayer.DisplayMatrix(imgOriginal.GetChannelValuesString(0x00ff0000, 16),
                         image.Width, image.Height);
                     break;
                 case "G":
-                    DisplayMatrix(imgOriginal.GetChannelValuesString(0x0000ff00, 8),
+                    gridDisplayer.DisplayMatrix(imgOriginal.GetChannelValuesString(0x0000ff00, 8),
                         image.Width, image.Height);
                     break;
                 case "B":
-                    DisplayMatrix(imgOriginal.GetChannelValuesString(0x000000ff, 0),
+                    gridDisplayer.DisplayMatrix(imgOriginal.GetChannelValuesString(0x000000ff, 0),
                         image.Width, image.Height);
                     break;
                 case "A4 matrix":
-                    DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(image),
+                    gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetA4Matrix(image),
                         image.Width, image.Height);
                     break;
                 case "A8 matrix":
-                    DisplayMatrix(ImageMatrixCalculator.GetA8Matrix(image),
+                    gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetA8Matrix(image),
                         image.Width, image.Height);
                     break;
                 case "Manhattan Distance":
-                    DisplayMatrix(ImageMatrixCalculator.GetManhattanDistanceMatrix(image),
+                    gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetManhattanDistanceMatrix(image),
                         image.Width, image.Height);
                     break;
             }
 
         }
 
-        private void DisplayMatrix<T>(T[] matrix, int width, int height) {
-            imageMatrix.Columns.Clear();
-            imageMatrix.Items.Clear();
+        private void btnMatrixApply_Click(object sender, RoutedEventArgs e) {
+            ImageData image = (bool)btnMatrixToggle.IsChecked ? imgOriginal : imgProcessed;
 
-            string[] labels = new string[width];
-            for (int i = 0; i < width; i++) {
-                labels[i] = i.ToString();
-
-                DataGridTextColumn col = new DataGridTextColumn();
-                col.Header = labels[i];
-                col.Binding = new Binding(labels[i]);
-
-                imageMatrix.Columns.Add(col);
-
+            if (image == null) {
+                return;
             }
 
-            for (int y = 0; y < height; y++) {
-                dynamic row = new ExpandoObject();
-                for (int x = 0; x < width; x++) {
-                    ((IDictionary<string, object>)row)[labels[x]] = matrix[y * width + x];
-                }
+            switch (matrixDropMenu.SelectedItem.ToString()) {
+                case "R":
+                    gridDisplayer.ApplyChangesInChannel(image, 0x00FFFF, 16);
+                    break;
+                case "G":
+                    gridDisplayer.ApplyChangesInChannel(image, 0xFF00FF, 8);
+                    break;
+                case "B":
+                    gridDisplayer.ApplyChangesInChannel(image, 0xFFFF00, 0);
+                    break;
+                default:
+                    gridDisplayer.ApplyChanges(image);
+                    break;
+            }
 
-                imageMatrix.Items.Add(row);
+            if ((bool)btnMatrixToggle.IsChecked) {
+                UpdateOriginalImageUI(image);
+            }
+            else {
+                UpdateProcessedImageUI(image);
             }
         }
+
 
         private void btnGraphDisplay_Click(object sender, RoutedEventArgs e) {
             if (imgOriginal == null) {

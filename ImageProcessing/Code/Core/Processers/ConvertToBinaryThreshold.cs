@@ -5,17 +5,17 @@ namespace ImageProcessing.Core.Processers {
         private int _threshold = 128;
         private bool _ignoreAlpha = true;
 
-        public ConvertToBinaryThreshold() {
+
+        public override ImageData Process(ImageData image) {
             GreyToBinarySettingsWindow settingsWindow = new GreyToBinarySettingsWindow();
             settingsWindow.ShowDialog();
 
-            if (settingsWindow.DialogResult == true) {
-                _threshold = settingsWindow.Threshold;
-                _ignoreAlpha = settingsWindow.IgnoreAlpha;
+            if (settingsWindow.doApply == false) {
+                return null;
             }
-        }
 
-        public override ImageData Process(ImageData image) {
+            _threshold = settingsWindow.Threshold;
+            _ignoreAlpha = settingsWindow.IgnoreAlpha;
             image = ImageUtility.ConvertToBinary(image, _ignoreAlpha, _threshold);
             return image;
         }

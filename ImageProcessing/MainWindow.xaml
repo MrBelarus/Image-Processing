@@ -67,6 +67,7 @@
                     <DataGrid x:Name="imageMatrix" Margin="10,10,10,95" />
                     <ComboBox x:Name="matrixDropMenu" HorizontalAlignment="Left" Margin="10,403,0,0" VerticalAlignment="Top" Width="120"/>
                     <Button x:Name="btnMatrixDisplay" Click="btnMatrixDisplay_Click" Content="Display" HorizontalAlignment="Left" Margin="135,403,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="#FF8DFF8D"/>
+                    <Button x:Name="btnMatrixApply" Click="btnMatrixApply_Click" Content="ApplyChanges" HorizontalAlignment="Left" Margin="350,403,0,0" VerticalAlignment="Top" Height="22" Width="87" Background="#FF8DFF8D"/>
                 </Grid>
             </TabItem>
             <TabItem Header="graphs" Height="20" VerticalAlignment="Top">

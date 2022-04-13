@@ -1,5 +1,4 @@
-﻿using ImageProcessing.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -13,22 +12,20 @@ using System.Windows.Shapes;
 
 namespace ImageProcessing {
     /// <summary>
-    /// Interaction logic for GreyToBinary.xaml
+    /// Логика взаимодействия для InputValueDialog.xaml
     /// </summary>
-    public partial class GreyToBinarySettingsWindow : Window {
-        public int Threshold { get; private set; }
-        public bool IgnoreAlpha { get; private set; }
+    public partial class InputValueWindow : Window {
+        public double Value { get; private set; }
 
         public bool doApply = false;
 
-        public GreyToBinarySettingsWindow() {
+        public InputValueWindow() {
             InitializeComponent();
         }
 
         private void Continue_Click(object sender, RoutedEventArgs e) {
             try {
-                Threshold = MathModule.Clamp(Convert.ToInt32(thresholdValue.Text), 0, 255);
-                IgnoreAlpha = (bool)ignoreAlpha.IsChecked;
+                Value = Convert.ToDouble(inputValue.Text);
             }
             catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -38,5 +35,7 @@ namespace ImageProcessing {
             doApply = true;
             this.DialogResult = true;
         }
+
+        
     }
 }
