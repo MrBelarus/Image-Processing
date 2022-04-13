@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace ImageProcessing.Code.Core {
+namespace ImageProcessing.Core {
     public class GridDisplayer {
         private DataGrid imageMatrix;
 
