@@ -167,6 +167,7 @@ namespace ImageProcessing.Core {
             return pixels;
         }
 
+        /// <param name="mask">R - mask=0xff0000, rightShift=16</param>
         public string[] GetChannelValuesString(int mask, int rightShift) {
             string[] pixels = new string[Width * Height];
             for (int y = 0; y < Height; y++) {
@@ -178,6 +179,19 @@ namespace ImageProcessing.Core {
             }
 
             return pixels;
+        }
+
+        /// <param name="mask">R - mask=0xff0000, rightShift=16</param>
+        public int[] GetChannelValues(int mask, int rightShift) {
+            int[] channel = new int[Width * Height];
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    int pxl = GetPixel(x, y);
+                    //ARGB
+                    channel[y * Width + x] = ((pxl & mask) >> rightShift);
+                }
+            }
+            return channel;
         }
 
         /// <summary>
@@ -303,7 +317,7 @@ namespace ImageProcessing.Core {
                     //RRRGGGBB in 8bit
                     int pxlValue = GetPixel(x, y);
                     int R = pxlValue >> 5;
-                    int G = pxlValue & 0b0001111 >> 2;
+                    int G = (pxlValue & 0b0001111) >> 2;
                     int B = pxlValue & 0b0000011;
                     return Color.FromArgb(R, G, B);
                 case 16:
@@ -313,13 +327,13 @@ namespace ImageProcessing.Core {
                     //16bit rgb565
                     pxlValue = GetPixel(x, y);
                     R = pxlValue >> 11;
-                    G = pxlValue & 0x000007E0 >> 5;
+                    G = (pxlValue & 0x000007E0) >> 5;
                     B = pxlValue & 0x0000001F;
                     return Color.FromArgb(R, G, B);
                 case 24:
                     pxlValue = GetPixel(x, y);
-                    R = pxlValue & 0x00ff0000 >> 16;
-                    G = pxlValue & 0x0000ff00 >> 8;
+                    R = (pxlValue & 0x00ff0000) >> 16;
+                    G = (pxlValue & 0x0000ff00) >> 8;
                     B = pxlValue & 0x000000ff;
                     return Color.FromArgb(R, G, B);
                 case 32:
@@ -328,8 +342,8 @@ namespace ImageProcessing.Core {
                     }
                     pxlValue = GetPixel(x, y);
                     int A = (int)(pxlValue & 0xff000000) >> 24;
-                    R = pxlValue & 0x00ff0000 >> 16;
-                    G = pxlValue & 0x0000ff00 >> 8;
+                    R = (pxlValue & 0x00ff0000) >> 16;
+                    G = (pxlValue & 0x0000ff00) >> 8;
                     B = pxlValue & 0x000000ff;
                     return Color.FromArgb(A, R, G, B);
             }

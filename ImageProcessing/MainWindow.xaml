@@ -39,7 +39,7 @@
                                 <Canvas.Background>
                                     <VisualBrush Stretch="None">
                                         <VisualBrush.Visual>
-                                            <Image x:Name="workSpaceImage" />
+                                            <Image x:Name="workSpaceImage" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Canvas.Background>
@@ -48,11 +48,11 @@
                     </StackPanel>
                     <StackPanel x:Name="pnlWorkSpaceImage_original" Margin="249,10,10,61" Grid.Column="1">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">
-                            <Canvas x:Name="imageCanvas_original" Width="{Binding ActualWidth, ElementName=workSpaceImage_original}" Height="{Binding ActualHeight, ElementName=workSpaceImage_original}" >
+                            <Canvas x:Name="imageCanvas_original" >
                                 <Canvas.Background>
                                     <VisualBrush Stretch="None">
                                         <VisualBrush.Visual>
-                                            <Image x:Name="workSpaceImage_original" />
+                                            <Image x:Name="workSpaceImage_original" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Canvas.Background>

@@ -39,12 +39,16 @@ namespace ImageProcessing {
             "Convert to grey",
             "Convert to binary threshold",
             "Convert to binary S9",
-            "Invert colors"
+            "Invert colors",
+            "RGB to grey max",
         };
 
         readonly string[] graphDisplayOptions = new string[] {
             "Manhattan Distance",
             "Brightness",
+            "R",
+            "G",
+            "B",
         };
 
         public MainWindow() {
@@ -72,6 +76,9 @@ namespace ImageProcessing {
                         break;
                     case "Invert colors":
                         imgProcesser = new InvertColor();
+                        break;
+                    case "RGB to grey max":
+                        imgProcesser = new ConvertRGB_ToGreyMax();
                         break;
                 }
 
@@ -118,13 +125,7 @@ namespace ImageProcessing {
                     return;
                 }
 
-                workSpaceImage_original.Width = imgOriginal.Width;
-                workSpaceImage_original.Height = imgOriginal.Height;
-                workSpaceImage_original.Source = imgOriginal.GetBitmapImage();
-
-                //refresh width/height of canvas
-                imageCanvas_original.Width = imgOriginal.Width;
-                imageCanvas_original.Height = imgOriginal.Height;
+                UpdateOriginalImageUI(ImageOriginal);
             }
         }
 
@@ -156,16 +157,33 @@ namespace ImageProcessing {
                 return;
             }
             imgProcessed = image;
+
             workSpaceImage.Source = image.GetBitmapImage();
-            imageCanvas.Width = image.Width;
-            imageCanvas.Height = image.Height;
+            if (image.Width < 50) {
+                workSpaceImage.Width = image.Width * 4;
+                workSpaceImage.Height = image.Height * 4;
+            }
+            else if (image.Width < 100) {
+                workSpaceImage.Width = image.Width * 2;
+                workSpaceImage.Height = image.Height * 2;
+            }
+            imageCanvas.Width = workSpaceImage.Width;
+            imageCanvas.Height = workSpaceImage.Height;
         }
 
         public void UpdateOriginalImageUI(ImageData image) {
             imgOriginal = image;
             workSpaceImage_original.Source = image.GetBitmapImage();
-            imageCanvas_original.Width = image.Width;
-            imageCanvas_original.Height = image.Height;
+            if (image.Width < 50) {
+                workSpaceImage_original.Width = image.Width * 4;
+                workSpaceImage_original.Height = image.Height * 4;
+            }
+            else if (image.Width < 100) {
+                workSpaceImage_original.Width = image.Width * 2;
+                workSpaceImage_original.Height = image.Height * 2;
+            }
+            imageCanvas_original.Width = workSpaceImage_original.Width;
+            imageCanvas_original.Height = workSpaceImage_original.Height;
         }
 
         private void btnMatrixDisplay_Click(object sender, RoutedEventArgs e) {
@@ -255,6 +273,15 @@ namespace ImageProcessing {
                     break;
                 case "Brightness":
                     dataArray = imgOriginal.GetBrightnessArray();
+                    break;
+                case "R":
+                    dataArray = imgOriginal.GetChannelValues(0xff0000, 16);
+                    break;
+                case "G":
+                    dataArray = imgOriginal.GetChannelValues(0x00ff00, 8);
+                    break;
+                case "B":
+                    dataArray = imgOriginal.GetChannelValues(0x0000ff, 0);
                     break;
             }
 
