@@ -34,7 +34,7 @@
                     <Button x:Name="btnCopyProcessedToOriginal" Click="OnBtnCopyToOriginalClick" Content="Save to original" HorizontalAlignment="Left" Margin="482,419,0,0" VerticalAlignment="Top" Height="35" Width="140" Background="#FFB3FFA7" Grid.Column="1"/>
 
                     <StackPanel x:Name="pnlWorkSpaceImage" Margin="10,10,397,61" Grid.ColumnSpan="2">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">
+                        <ScrollViewer x:Name="scrollViewImage" HorizontalScrollBarVisibility="Auto" ScrollChanged="scrollViewImage_ScrollChanged" VerticalScrollBarVisibility="Auto" Height="397">
                             <Canvas x:Name="imageCanvas" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}">
                                 <Canvas.Background>
                                     <VisualBrush Stretch="None">
@@ -47,7 +47,7 @@
                         </ScrollViewer>
                     </StackPanel>
                     <StackPanel x:Name="pnlWorkSpaceImage_original" Margin="249,10,10,61" Grid.Column="1">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto" Height="397">
+                        <ScrollViewer x:Name="scrollViewImageOriginal" HorizontalScrollBarVisibility="Auto" ScrollChanged="scrollViewImageOriginal_ScrollChanged" VerticalScrollBarVisibility="Auto" Height="397">
                             <Canvas x:Name="imageCanvas_original" >
                                 <Canvas.Background>
                                     <VisualBrush Stretch="None">

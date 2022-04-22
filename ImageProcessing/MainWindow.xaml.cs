@@ -6,6 +6,8 @@ using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Controls;
 
 namespace ImageProcessing {
     /// <summary>
@@ -157,33 +159,32 @@ namespace ImageProcessing {
                 return;
             }
             imgProcessed = image;
-
-            workSpaceImage.Source = image.GetBitmapImage();
-            if (image.Width < 50) {
-                workSpaceImage.Width = image.Width * 4;
-                workSpaceImage.Height = image.Height * 4;
-            }
-            else if (image.Width < 100) {
-                workSpaceImage.Width = image.Width * 2;
-                workSpaceImage.Height = image.Height * 2;
-            }
-            imageCanvas.Width = workSpaceImage.Width;
-            imageCanvas.Height = workSpaceImage.Height;
+            UpdateImageSize(image, workSpaceImage, imageCanvas);
         }
 
         public void UpdateOriginalImageUI(ImageData image) {
             imgOriginal = image;
-            workSpaceImage_original.Source = image.GetBitmapImage();
-            if (image.Width < 50) {
-                workSpaceImage_original.Width = image.Width * 4;
-                workSpaceImage_original.Height = image.Height * 4;
+            UpdateImageSize(image, workSpaceImage_original, imageCanvas_original);
+        }
+
+        private void UpdateImageSize(ImageData imgData, System.Windows.Controls.Image workSpaceImage, Canvas imgCanvas) {
+            workSpaceImage.Source = imgData.GetBitmapImage();
+
+            if (imgData.Width < 100) {
+                workSpaceImage.Width = imgData.Width * 4;
+                workSpaceImage.Height = imgData.Height * 4;
             }
-            else if (image.Width < 100) {
-                workSpaceImage_original.Width = image.Width * 2;
-                workSpaceImage_original.Height = image.Height * 2;
+            else if (imgData.Width < 250) {
+                workSpaceImage.Width = imgData.Width * 2;
+                workSpaceImage.Height = imgData.Height * 2;
             }
-            imageCanvas_original.Width = workSpaceImage_original.Width;
-            imageCanvas_original.Height = workSpaceImage_original.Height;
+            else {
+                workSpaceImage.Width = imgData.Width;
+                workSpaceImage.Height = imgData.Height;
+            }
+
+            imgCanvas.Width = workSpaceImage.Width;
+            imgCanvas.Height = workSpaceImage.Height;
         }
 
         private void btnMatrixDisplay_Click(object sender, RoutedEventArgs e) {
@@ -287,6 +288,16 @@ namespace ImageProcessing {
 
             points = ImageMatrixCalculator.CalculateValuesFrequences(dataArray);
             graphDisplayer.DisplayColumnGraph(points);
+        }
+
+        private void scrollViewImageOriginal_ScrollChanged(object sender, ScrollChangedEventArgs e) {
+            scrollViewImage.ScrollToVerticalOffset(e.VerticalOffset);
+            scrollViewImage.ScrollToHorizontalOffset(e.HorizontalOffset);
+        }
+
+        private void scrollViewImage_ScrollChanged(object sender, ScrollChangedEventArgs e) {
+            scrollViewImageOriginal.ScrollToVerticalOffset(e.VerticalOffset);
+            scrollViewImageOriginal.ScrollToHorizontalOffset(e.HorizontalOffset);
         }
     }
 }

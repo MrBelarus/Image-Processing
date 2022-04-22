@@ -56,12 +56,22 @@ namespace ImageProcessing.Utils {
             return new Tuple<byte[], int>(bytes, bmpData.Stride);
         }
 
-        public static Bitmap BitmapFromBytes(byte[] bytes, int width, int height, PixelFormat bmpFormat) {
+        /// <summary>
+        /// Note that pallete will be generated as default,<br>
+        /// so you should backup palette and apply with new bitmap</br> 
+        /// </summary>
+        /// <returns>New bitmap from bytes</returns>
+        public static Bitmap BitmapFromBytes(byte[] bytes, int width, int height, PixelFormat bmpFormat, ColorPalette palette = null) {
             Bitmap bmp = new Bitmap(width, height, bmpFormat);
             var rect = new Rectangle(0, 0, width, height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmpFormat);
             Marshal.Copy(bytes, 0, bmpData.Scan0, bytes.Length);
             bmp.UnlockBits(bmpData);
+
+            if (palette != null && palette.Entries.Length > 0) {
+                bmp.Palette = palette;
+            }
+
             return bmp;
         }
 
