@@ -41,6 +41,7 @@ namespace ImageProcessing {
             "Convert to binary S9",
             "Invert colors",
             "RGB to grey max",
+            "Filter 3x3"
         };
 
         readonly string[] graphDisplayOptions = new string[] {
@@ -79,6 +80,13 @@ namespace ImageProcessing {
                         break;
                     case "RGB to grey max":
                         imgProcesser = new ConvertRGB_ToGreyMax();
+                        break;
+                    case "Filter 3x3":
+                        imgProcesser = new AverageFiltration3x3(new int[3][] {
+                            new int[] {1, 1, 1},
+                            new int[] {1, 1, 1},
+                            new int[] {1, 1, 1},
+                        });
                         break;
                 }
 
