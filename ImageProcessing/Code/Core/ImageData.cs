@@ -18,7 +18,7 @@ namespace ImageProcessing.Core {
 
         public ImageData(ImageData from) {
             this._bitmap = ImageUtility.BitmapFromBytes(
-                from.ImageBytes, from.Width, from.Height, from._bitmap.PixelFormat);
+                from.ImageBytes, from.Width, from.Height, from._bitmap.PixelFormat, from._bitmap.Palette);
         }
 
         public int Width => _bitmap.Width;
@@ -60,6 +60,7 @@ namespace ImageProcessing.Core {
             imgBytes = result.Item1;
             stride = result.Item2;
             clrDepth = ColorDepth;
+            var palette = _bitmap.Palette;
         }
 
         public BitmapImage GetBitmapImage() {
@@ -96,7 +97,8 @@ namespace ImageProcessing.Core {
                     }
                 case 8:
                     offsetX = x; //every 8bits is a new pixel, so 1 byte has 1 pixels
-                    return imgBytes[offsetY + offsetX];
+                    var val = imgBytes[offsetY + offsetX];
+                    return val;
                 case 16:
                     offsetX = 2 * x;
                     if (BitConverter.IsLittleEndian) {
@@ -358,7 +360,6 @@ namespace ImageProcessing.Core {
         }
 
         public int GetBrightness(int x, int y) {
-            int pxlValue = GetPixel(x, y);
             return (int)(_bitmap.GetPixel(x, y).GetBrightness() * 255);
         }
 
@@ -374,17 +375,17 @@ namespace ImageProcessing.Core {
 
         public void ApplyChanges(PixelFormat format) {
             //TODO: test format
-            _bitmap = ImageUtility.BitmapFromBytes(ImageBytes, Width, Height, format);
+            _bitmap = ImageUtility.BitmapFromBytes(ImageBytes, Width, Height, format, _bitmap.Palette);
         }
         public void ApplyChanges() {
-            _bitmap = ImageUtility.BitmapFromBytes(ImageBytes, Width, Height, _bitmap.PixelFormat);
+            ApplyChanges(_bitmap.PixelFormat);
         }
         public void DiscardChanges(PixelFormat format) {
             //TODO: test format
             RefreshImageData(format);
         }
         public void DiscardChanges() {
-            RefreshImageData(_bitmap.PixelFormat);
+            DiscardChanges(_bitmap.PixelFormat);
         }
 
         private int GetPowerOfTwo(int power) {
