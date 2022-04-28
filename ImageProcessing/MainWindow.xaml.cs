@@ -43,7 +43,8 @@ namespace ImageProcessing {
             "Convert to binary S9",
             "Invert colors",
             "RGB to grey max",
-            "Filter 3x3"
+            "Filter 3x3",
+            "Dilate",
         };
 
         readonly string[] graphDisplayOptions = new string[] {
@@ -85,6 +86,9 @@ namespace ImageProcessing {
                         break;
                     case "Filter 3x3":
                         imgProcesser = new AverageFiltration3x3();
+                        break;
+                    case "Dilate":
+                        imgProcesser = new BinaryDilate3x3();
                         break;
                 }
 

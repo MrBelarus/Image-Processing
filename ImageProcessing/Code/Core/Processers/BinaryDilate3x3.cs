@@ -31,21 +31,21 @@ namespace ImageProcessing.Core.Processers {
             for (int x = 1; x < width - 1; x++) {
 
                 for (int i = 0; i < 3; i++) {
-                    for(int j = 1; j < 3; j++) {
-                        if (i != j && _mask3x3[i][j] != 0) {
-                            if (pixels[x + i - 1 + (j - 1) * width] == _mask3x3[i][j]) {
-                                image.SetPixel(x, 0, 1);
+                    for (int j = 1; j < 3; j++) {
+                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                            if (pixels[x + i - 1 + (j - 1) * width] == _mask3x3[i][j] - 1) {
+                                image.SetPixel(x, 0, 0);
                                 break;
                             }
                         }
                     }
                 }
-                
+
                 for (int i = 0; i < 3; i++) {
                     for (int j = 1; j < 3; j++) {
-                        if (i != j && _mask3x3[i][j] != 0) {
-                            if (pixels[lowestStringStartInd + x + i - 1 + (1 - j) * width] == _mask3x3[i][j]) {
-                                image.SetPixel(x, height - 1, 1);
+                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                            if (pixels[lowestStringStartInd + x + i - 1 + (1 - j) * width] == _mask3x3[i][j] - 1) {
+                                image.SetPixel(x, height - 1, 0);
                                 break;
                             }
                         }
@@ -58,9 +58,9 @@ namespace ImageProcessing.Core.Processers {
 
                 for (int i = 1; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        if (i != j && _mask3x3[i][j] != 0) {
-                            if (pixels[width * (y + j - 1) + i - 1] == _mask3x3[i][j]) {
-                                image.SetPixel(0, y, 1);
+                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                            if (pixels[width * (y + j - 1) + i - 1] == _mask3x3[i][j] - 1) {
+                                image.SetPixel(0, y, 0);
                                 break;
                             }
                         }
@@ -69,9 +69,9 @@ namespace ImageProcessing.Core.Processers {
 
                 for (int i = 0; i < 2; i++) {
                     for (int j = 0; j < 3; j++) {
-                        if (i != j && _mask3x3[i][j] != 0) {
-                            if (pixels[width * (y + j) + i - 2] == _mask3x3[i][j]) {
-                                image.SetPixel(width - 1, y, 1);
+                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                            if (pixels[width * (y + j) + i - 2] == _mask3x3[i][j] - 1) {
+                                image.SetPixel(width - 1, y, 0);
                                 break;
                             }
                         }
@@ -81,42 +81,53 @@ namespace ImageProcessing.Core.Processers {
 
 
             //corners
-            image.SetPixelGrey(0, 0, (int)MathF.Round((
-                pixels[0] * _mask3x3[1][1] +
-                pixels[1] * _mask3x3[2][1] +
-                pixels[width] * _mask3x3[1][2] +
-                pixels[width + 1] * _mask3x3[2][2]) / 4f));
-            image.SetPixelGrey(width - 1, 0, (int)MathF.Round((
-                pixels[width - 1] * _mask3x3[1][1] +
-                pixels[width - 2] * _mask3x3[0][1] +
-                pixels[width * 2 - 1] * _mask3x3[1][2] +
-                pixels[width * 2 - 2] * _mask3x3[0][2]) / 4f));
-            image.SetPixelGrey(0, height - 1, (int)MathF.Round((
-                pixels[width * (height - 1)] * _mask3x3[1][1] +
-                pixels[width * (height - 2)] * _mask3x3[1][0] +
-                pixels[width * (height - 2) + 1] * _mask3x3[2][0] +
-                pixels[width * (height - 1) + 1] * _mask3x3[2][1]) / 4f));
-            image.SetPixelGrey(width - 1, height - 1, (int)MathF.Round((
-                pixels[width * height - 1] * _mask3x3[1][1] +
-                pixels[width * height - 2] * _mask3x3[0][1] +
-                pixels[width * (height - 1) - 1] * _mask3x3[1][0] +
-                pixels[width * (height - 1) - 2] * _mask3x3[0][0]) / 4f));
+            for (int i = 1; i < 3; i++) {
+                for (int j = 1; j < 3; j++) {
+                    if (pixels[width * (j - 1) + i - 1] == _mask3x3[i][j] - 1) {
+                        image.SetPixel(0, 0, 0);
+                        break;
+                    }
+                }
+            }
+            for (int i = 0; i < 2; i++) {
+                for (int j = 1; j < 3; j++) {
+                    if (pixels[width * j + i - 2] == _mask3x3[i][j] - 1) {
+                        image.SetPixel(width - 1, 0, 0);
+                        break;
+                    }
+                }
+            }
+            for (int i = 1; i < 3; i++) {
+                for (int j = 0; j < 2; j++) {
+                    if (pixels[width * (height - 2 + j) + i - 1] == _mask3x3[i][j] - 1) {
+                        image.SetPixel(width - 1, 0, 0);
+                        break;
+                    }
+                }
+            }
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 2; j++) {
+                    if (pixels[width * (height - 1 + j) + i - 2] == _mask3x3[i][j] - 1) {
+                        image.SetPixel(width - 1, 0, 0);
+                        break;
+                    }
+                }
+            }
 
             //main body
             for (int y = 1; y < height - 1; y++) {
                 for (int x = 1; x < width - 1; x++) {
-                    float pxl =
-                        pixels[y * width + x] * _mask3x3[1][1] +
-                        pixels[(y - 1) * width + x] * _mask3x3[1][0] +
-                        pixels[(y + 1) * width + x] * _mask3x3[1][2] +
-                        pixels[y * width + x - 1] * _mask3x3[0][1] +
-                        pixels[y * width + x + 1] * _mask3x3[2][1] +
-                        pixels[(y + 1) * width + x + 1] * _mask3x3[2][2] +
-                        pixels[(y + 1) * width + x - 1] * _mask3x3[0][2] +
-                        pixels[(y - 1) * width + x + 1] * _mask3x3[2][0] +
-                        pixels[(y - 1) * width + x - 1] * _mask3x3[0][0];
 
-                    image.SetPixelGrey(x, y, (int)MathF.Round(pxl / 9f));
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            if (i != j && i != 1 || _mask3x3[i][j] != 0) {
+                                if (pixels[width * (y + j - 1) + x + i - 1] == _mask3x3[i][j] - 1) {
+                                    image.SetPixel(x, y, 0);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
