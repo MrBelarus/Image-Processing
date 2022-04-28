@@ -4,10 +4,17 @@ using System.Text;
 
 namespace ImageProcessing.Core.Processers {
     public class AverageFiltration3x3 : ImageProcesser {
-        int[][] _mask3x3;
+        int[][] _mask3x3 = new int[3][]
+             {
+                new int[3] {1, 1, 1},
+                new int[3] {1, 1, 1},
+                new int[3] {1, 1, 1},
+             };
 
-        public AverageFiltration3x3(int[][] mask3x3) {
-            _mask3x3 = mask3x3;
+        public AverageFiltration3x3(int[][] mask3x3 = null) {
+            if (mask3x3 != null) {
+                _mask3x3 = mask3x3;
+            }
         }
 
         public override ImageData Process(ImageData image) {

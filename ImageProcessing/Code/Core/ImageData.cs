@@ -284,7 +284,14 @@ namespace ImageProcessing.Core {
         /// <param name="value">[0..255]</param>
         public void SetPixelGrey(int x, int y, int value) {
             value = MathModule.Clamp(value, 0, 255);
-            SetPixel(x, y, value + (value << 8) + (value << 16));
+            switch (clrDepth) {
+                case 8:
+                    SetPixel(x, y, value);
+                    break;
+                default:
+                    SetPixel(x, y, value + (value << 8) + (value << 16));
+                    break;
+            }
         }
 
         public void SetPixel(int x, int y, Color color) {

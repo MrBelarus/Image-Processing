@@ -84,11 +84,7 @@ namespace ImageProcessing {
                         imgProcesser = new ConvertRGB_ToGreyMax();
                         break;
                     case "Filter 3x3":
-                        imgProcesser = new AverageFiltration3x3(new int[3][] {
-                            new int[] {1, 1, 1},
-                            new int[] {1, 1, 1},
-                            new int[] {1, 1, 1},
-                        });
+                        imgProcesser = new AverageFiltration3x3();
                         break;
                 }
 
