@@ -45,6 +45,7 @@ namespace ImageProcessing {
             "RGB to grey max",
             "Filter 3x3",
             "Dilate",
+            "Erosion",
         };
 
         readonly string[] graphDisplayOptions = new string[] {
@@ -89,6 +90,9 @@ namespace ImageProcessing {
                         break;
                     case "Dilate":
                         imgProcesser = new BinaryDilate3x3();
+                        break;
+                    case "Erosion":
+                        imgProcesser = new BinaryErosion3x3();
                         break;
                 }
 
