@@ -46,6 +46,7 @@ namespace ImageProcessing {
             "Filter 3x3",
             "Dilate",
             "Erosion",
+            "MorphologicalOpen",
         };
 
         readonly string[] graphDisplayOptions = new string[] {
@@ -93,6 +94,9 @@ namespace ImageProcessing {
                         break;
                     case "Erosion":
                         imgProcesser = new BinaryErosion3x3();
+                        break;
+                    case "MorphologicalOpen":
+                        imgProcesser = new MorphologicalOpen();
                         break;
                 }
 

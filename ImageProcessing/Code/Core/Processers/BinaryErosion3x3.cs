@@ -13,6 +13,14 @@ namespace ImageProcessing.Core.Processers {
             if (mask3x3 != null) {
                 _mask3x3 = mask3x3;
             }
+            else {
+                Matrix3x3Input matrix3x3Input = new Matrix3x3Input();
+                matrix3x3Input.ShowDialog();
+
+                if (matrix3x3Input.doApply != false) {
+                    _mask3x3 = matrix3x3Input.Matrix3x3Int;
+                }
+            }
         }
 
         public override ImageData Process(ImageData image) {
@@ -31,7 +39,7 @@ namespace ImageProcessing.Core.Processers {
                 pixelWasChanged = false;
                 for (int i = 0; i < 3; i++) {
                     for (int j = 1; j < 3; j++) {
-                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                        if (!(j == 1 && i == 1) && _mask3x3[j][i] != 0) {
                             if (pixels[x + i - 1 + (j - 1) * width] == 1) {
                                 image.SetPixel(x, 0, 1);
                                 pixelWasChanged = true;
@@ -49,7 +57,7 @@ namespace ImageProcessing.Core.Processers {
                 pixelWasChanged = false;
                 for (int i = 0; i < 3; i++) {
                     for (int j = 1; j < 3; j++) {
-                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                        if (!(j == 1 && i == 1) && _mask3x3[j][i] != 0) {
                             if (pixels[lowestStringStartInd + x + i - 1 + (1 - j) * width] == 1) {
                                 image.SetPixel(x, height - 1, 1);
                                 pixelWasChanged = true;
@@ -71,7 +79,7 @@ namespace ImageProcessing.Core.Processers {
                 pixelWasChanged = false;
                 for (int i = 1; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                        if (!(j == 1 && i == 1) && _mask3x3[j][i] != 0) {
                             if (pixels[width * (y + j - 1) + i - 1] == 1) {
                                 image.SetPixel(0, y, 1);
                                 pixelWasChanged = true;
@@ -89,7 +97,7 @@ namespace ImageProcessing.Core.Processers {
                 pixelWasChanged = false;
                 for (int i = 0; i < 2; i++) {
                     for (int j = 0; j < 3; j++) {
-                        if (i != 1 && j != 1 || _mask3x3[i][j] != 0) {
+                        if (!(j == 1 && i == 1) && _mask3x3[j][i] != 0) {
                             if (pixels[width * (y + j) + i - 2] == 1) {
                                 image.SetPixel(width - 1, y, 1);
                                 pixelWasChanged = true;
@@ -181,7 +189,7 @@ namespace ImageProcessing.Core.Processers {
                     pixelWasChanged = false;
                     for (int i = 0; i < 3; i++) {
                         for (int j = 0; j < 3; j++) {
-                            if (i != j && i != 1 || _mask3x3[i][j] != 0) {
+                            if (!(j == 1 && i == 1) && _mask3x3[j][i] != 0) {
                                 if (pixels[width * (y + j - 1) + x + i - 1] == 1) {
                                     image.SetPixel(x, y, 1);
                                     pixelWasChanged = true;

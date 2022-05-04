@@ -1,0 +1,22 @@
+﻿<Window x:Class="ImageProcessing.Matrix3x3Input"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageProcessing"
+        mc:Ignorable="d"
+        Title="Matrix3x3Input" Height="200" Width="210">
+    <Grid>
+        <Button x:Name="btnConfirm" Content="Подтвердить" HorizontalAlignment="Left" Margin="57,88,0,0" VerticalAlignment="Top" Click="btnConfirm_Click"/>
+        <TextBox x:Name="el_00" HorizontalAlignment="Left" Margin="10,10,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_01" HorizontalAlignment="Left" Margin="68,10,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_02" HorizontalAlignment="Left" Margin="126,10,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_10" HorizontalAlignment="Left" Margin="10,36,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_11" HorizontalAlignment="Left" Margin="68,36,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_12" HorizontalAlignment="Left" Margin="126,36,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_20" HorizontalAlignment="Left" Margin="10,62,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_21" HorizontalAlignment="Left" Margin="68,62,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+        <TextBox x:Name="el_22" HorizontalAlignment="Left" Margin="126,62,0,0" Text="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="53" Height="21" TextAlignment="Center"/>
+
+    </Grid>
+</Window>
