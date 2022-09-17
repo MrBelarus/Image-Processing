@@ -35,6 +35,7 @@ namespace ImageProcessing {
             "A4 matrix",
             "A8 matrix",
             "Manhattan Distance",
+            "CoOccurenceMatrix Normalized"
         };
 
         readonly string[] matrixPerformOperations = new string[] {
@@ -47,6 +48,7 @@ namespace ImageProcessing {
             "Dilate",
             "Erosion",
             "MorphologicalOpen",
+            "Analyse Texture",
         };
 
         readonly string[] graphDisplayOptions = new string[] {
@@ -98,6 +100,11 @@ namespace ImageProcessing {
                     case "MorphologicalOpen":
                         imgProcesser = new MorphologicalOpen();
                         break;
+                    case "Analyse Texture":
+                        var window = new TextureAnalyse();
+                        window.SetImage(imgOriginal);
+                        window.Show();
+                        return;
                 }
 
                 try {
@@ -240,6 +247,11 @@ namespace ImageProcessing {
                 case "Manhattan Distance":
                     gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetManhattanDistanceMatrix(image),
                         image.Width, image.Height);
+                    break;                
+                case "CoOccurenceMatrix Normalized":
+                    gridDisplayer.DisplayMatrix(CoOccurenceMatrixCalculator.GetNormalizedMatrix(
+                                                CoOccurenceMatrixCalculator.GetImageMatrix_C90_D1(image)),
+                        256, 256);
                     break;
             }
         }
