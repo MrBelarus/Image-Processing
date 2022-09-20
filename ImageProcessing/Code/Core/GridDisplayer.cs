@@ -60,6 +60,11 @@ namespace ImageProcessing.Core {
             }
 
             string[] labels = new string[width];
+            DataGridTextColumn col1 = new DataGridTextColumn();
+            col1.Header = "";
+            col1.Binding = new Binding("-1");
+
+            imageMatrix.Columns.Add(col1);
             for (int x = 0; x < width; x++) { 
                 DataGridTextColumn col = new DataGridTextColumn();
                 col.Header = x.ToString();
@@ -71,7 +76,8 @@ namespace ImageProcessing.Core {
 
             for (int y = 0; y < height; y++) {
                 dynamic row = new ExpandoObject();
-                
+                ((IDictionary<string, object>)row)["-1"] = y.ToString();
+
                 for (int x = 0; x < width; x++) {
                     ((IDictionary<string, object>)row)[x.ToString()] = matrix[y * width + x].ToString();
                 }

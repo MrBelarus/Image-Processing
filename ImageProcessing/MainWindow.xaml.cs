@@ -35,6 +35,7 @@ namespace ImageProcessing {
             "A4 matrix",
             "A8 matrix",
             "Manhattan Distance",
+            "CoOccurenceMatrix",
             "CoOccurenceMatrix Normalized"
         };
 
@@ -131,6 +132,10 @@ namespace ImageProcessing {
         }
 
         #region MenuBarActions
+        private void OnTextureCompare(object sender, RoutedEventArgs e) {
+            new TexureComparatorWindow().Show();
+        }
+
         private void OnMenuCreateNewClick(object sender, RoutedEventArgs e) {
             workSpaceImage_original.Source = null;
             workSpaceImage.Source = null;
@@ -251,6 +256,10 @@ namespace ImageProcessing {
                 case "CoOccurenceMatrix Normalized":
                     gridDisplayer.DisplayMatrix(CoOccurenceMatrixCalculator.GetNormalizedMatrix(
                                                 CoOccurenceMatrixCalculator.GetImageMatrix_C90_D1(image)),
+                        256, 256);
+                    break;
+                case "CoOccurenceMatrix":
+                    gridDisplayer.DisplayMatrix(CoOccurenceMatrixCalculator.GetImageMatrix_C90_D1(image),
                         256, 256);
                     break;
             }
