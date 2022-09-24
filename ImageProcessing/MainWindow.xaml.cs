@@ -50,6 +50,7 @@ namespace ImageProcessing {
             "Erosion",
             "MorphologicalOpen",
             "Analyse Texture",
+            "ZhangSuen",
         };
 
         readonly string[] graphDisplayOptions = new string[] {
@@ -106,6 +107,9 @@ namespace ImageProcessing {
                         window.SetImage(imgOriginal);
                         window.Show();
                         return;
+                    case "ZhangSuen":
+                        imgProcesser = new ZhangSuen();
+                        break;
                 }
 
                 try {
