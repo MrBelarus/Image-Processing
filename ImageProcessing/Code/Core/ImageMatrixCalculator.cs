@@ -9,50 +9,114 @@ namespace ImageProcessing.Core {
         private static int imgWidth;
         private static int imgHeight;
 
+        /// <summary>
+        /// returns matrix where white is 0 and black is 1
+        /// </summary>
         public static int[] GetA8Matrix(ImageData imageData) {
             int width = imageData.Width, height = imageData.Height;
             int[] a8matrix = new int[width * height];
 
             int[] pixels = imageData.GetPixels();
 
-            //first and last strings
-            int lowestStringStartInd = width * (height - 1);
-            for (int x = 1; x < width - 1; x++) {
-                a8matrix[x] = 
-                    pixels[x - 1] + pixels[x + 1] + pixels[width + x] +
-                    pixels[width + x - 1] + pixels[width + x + 1];
+            int p2, p3, p4, p5, p6, p7, p8, p9;
 
-                a8matrix[lowestStringStartInd + x] = 
-                    pixels[lowestStringStartInd + x - 1] +
-                    pixels[lowestStringStartInd + x + 1] + pixels[lowestStringStartInd + x - width] +
-                    pixels[lowestStringStartInd - width + x - 1] + pixels[lowestStringStartInd - width + x + 1];
-            }
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    p2 = y == 0 ? 1 : pixels[(y - 1) * width + x];
+                    p3 = (y == 0 || x == width - 1) ? 1 : pixels[(y - 1) * width + x + 1];
+                    p4 = (x == width - 1) ? 1 : pixels[y * width + x + 1];
+                    p5 = (y == height - 1 || x == width - 1) ? 1 : pixels[(y + 1) * width + x + 1];
+                    p6 = (y == height - 1) ? 1 : pixels[(y + 1) * width + x];
+                    p7 = (y == height - 1 || x == 0) ? 1 : pixels[(y + 1) * width + x - 1];
+                    p8 = x == 0 ? 1 : pixels[y * width + x - 1];
+                    p9 = (y == 0 || x == 0) ? 1 : pixels[(y - 1) * width + x - 1];
 
-            //first and last columns
-            for (int y = 1; y < height - 1; y++) {
-                a8matrix[width * y] = 
-                    pixels[width * y + 1] +
-                    pixels[width * (y - 1)] + pixels[width * (y + 1)] +
-                    pixels[width * (y - 1) + 1] + pixels[width * (y + 1) + 1];
 
-                a8matrix[width * (y + 1) - 1] = 
-                    pixels[width * (y + 1) - 2] +
-                    pixels[width * y - 1] + pixels[width * (y + 2) - 1] +
-                    pixels[width * (y + 2) - 2] + pixels[width * y - 2];
-            }
-
-            //main body
-            for (int y = 1; y < imageData.Height - 1; y++) {
-                for (int x = 1; x < width - 1; x++) {
-                    a8matrix[y * width + x] = 
-                        pixels[(y - 1) * width + x] + pixels[(y + 1) * width + x] +
-                        pixels[y * width + x - 1] + pixels[y * width + x + 1] +
-                        pixels[(y + 1) * width + x + 1] + pixels[(y + 1) * width + x - 1] +
-                        pixels[(y - 1) * width + x + 1] + pixels[(y - 1) * width + x - 1];
+                    a8matrix[y * width + x] =
+                            8 - (p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9);
                 }
             }
 
             return a8matrix;
+        }
+
+        /// <summary>
+        /// returns matrix where white is 1 and black is 0
+        /// </summary>
+        public static int[] GetA8(ImageData imageData) {
+            int width = imageData.Width, height = imageData.Height;
+            int[] a8matrix = new int[width * height];
+
+            int[] pixels = imageData.GetPixels();
+
+            int p2, p3, p4, p5, p6, p7, p8, p9;
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    p2 = y == 0 ? 1 : pixels[(y - 1) * width + x];
+                    p3 = (y == 0 || x == width - 1) ? 1 : pixels[(y - 1) * width + x + 1];
+                    p4 = (x == width - 1) ? 1 : pixels[y * width + x + 1];
+                    p5 = (y == height - 1 || x == width - 1) ? 1 : pixels[(y + 1) * width + x + 1];
+                    p6 = (y == height - 1) ? 1 : pixels[(y + 1) * width + x];
+                    p7 = (y == height - 1 || x == 0) ? 1 : pixels[(y + 1) * width + x - 1];
+                    p8 = x == 0 ? 1 : pixels[y * width + x - 1];
+                    p9 = (y == 0 || x == 0) ? 1 : pixels[(y - 1) * width + x - 1];
+
+
+                    a8matrix[y * width + x] =
+                            p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
+                }
+            }
+
+            return a8matrix;
+        }
+
+        public static int[] GetB8Matrix(ImageData imageData) {
+            int width = imageData.Width, height = imageData.Height;
+            int[] b8matrix = new int[width * height];
+
+            int[] pixels = imageData.GetPixels();
+
+            int p2, p3, p4, p5, p6, p7, p8, p9;
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    p2 = y == 0 ? 1 : pixels[(y - 1) * width + x];
+                    p3 = (y == 0 || x == width - 1) ? 1 : pixels[(y - 1) * width + x + 1];
+                    p4 = (x == width - 1) ? 1 : pixels[y * width + x + 1];
+                    p5 = (y == height - 1 || x == width - 1) ? 1 : pixels[(y + 1) * width + x + 1];
+                    p6 = (y == height - 1) ? 1 : pixels[(y + 1) * width + x];
+                    p7 = (y == height - 1 || x == 0) ? 1 : pixels[(y + 1) * width + x - 1];
+                    p8 = x == 0 ? 1 : pixels[y * width + x - 1];
+                    p9 = (y == 0 || x == 0) ? 1 : pixels[(y - 1) * width + x - 1];
+
+                    b8matrix[y * width + x] =
+                            GetPairsCount(p2, p3, p4, p5, p6, p7, p8, p9, p2);
+                }
+            }
+
+            return b8matrix;
+        }
+
+        public static int[] GetCnMatrix(ImageData imageData) {
+            int[] a8 = GetA8Matrix(imageData);
+            int[] b8 = GetB8Matrix(imageData);
+            var result = new int[a8.Length];
+
+            for (int i = 0; i < a8.Length; i++) {
+                result[i] = a8[i] - b8[i];
+            }
+            return result;
+        }
+
+        private static int GetPairsCount(params int[] pixels) {
+            int count = 0;
+            for (int i = 0; i < pixels.Length - 1; i++) {
+                if (pixels[i] == 0 && pixels[i + 1] == 0) {
+                    count++;
+                }
+            }
+            return count;
         }
 
         public static int[] GetA4Matrix(ImageData imageData) {
@@ -178,13 +242,13 @@ namespace ImageProcessing.Core {
 
             List<int> valuesList = values.ToList();
 
-            while(valuesList.Count > 0) {
+            while (valuesList.Count > 0) {
                 int valueCount = 1;
                 int value = valuesList[0];
                 valuesList.RemoveAt(0);
 
-                for(int j = 0; j < valuesList.Count; j++){
-                    if(valuesList[j] == value) {
+                for (int j = 0; j < valuesList.Count; j++) {
+                    if (valuesList[j] == value) {
                         valuesList.RemoveAt(j);
                         valueCount++;
                         j--;
@@ -193,8 +257,8 @@ namespace ImageProcessing.Core {
 
                 //sorted inserting
                 bool flag = true;
-                for(int j = 0; j < points.Count; j++) {
-                    if(points[j].X > value) {
+                for (int j = 0; j < points.Count; j++) {
+                    if (points[j].X > value) {
                         points.Insert(j, new OxyPlot.DataPoint(value, valueCount));
                         flag = false;
                         break;
@@ -218,7 +282,7 @@ namespace ImageProcessing.Core {
 
             int[] result = new int[distances.Length];
 
-            for(int i = 0; i < distances.Length; i++) {
+            for (int i = 0; i < distances.Length; i++) {
                 result[i] = (distances[i] - minDistance) * 255 / amp;
             }
 

@@ -14,7 +14,7 @@ namespace ImageProcessing.Core.Processers {
             }
             image.ApplyChanges();
             int[] pxls = image.GetPixels();
-            int[] a8_matrix = ImageMatrixCalculator.GetA8Matrix(image);
+            int[] a8_matrix = ImageMatrixCalculator.GetA8(image);
             int imgWidth = image.Width;
 
             for (int y = 0; y < image.Height; y++) {
@@ -26,6 +26,7 @@ namespace ImageProcessing.Core.Processers {
                 }
             }
             image.ApplyChanges();
+            image = Utils.ImageUtility.ConvertToBinary(image, true, 128);
 
             return image;
         }

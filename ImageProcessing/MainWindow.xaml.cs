@@ -34,6 +34,8 @@ namespace ImageProcessing {
             "B",
             "A4 matrix",
             "A8 matrix",
+            "B8 matrix",
+            "Cn matrix",
             "Manhattan Distance",
             "CoOccurenceMatrix",
             "CoOccurenceMatrix Normalized"
@@ -251,6 +253,14 @@ namespace ImageProcessing {
                     break;
                 case "A8 matrix":
                     gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetA8Matrix(image),
+                        image.Width, image.Height);
+                    break;
+                case "B8 matrix":
+                    gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetB8Matrix(image),
+                        image.Width, image.Height);
+                    break;
+                case "Cn matrix":
+                    gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetCnMatrix(image),
                         image.Width, image.Height);
                     break;
                 case "Manhattan Distance":
