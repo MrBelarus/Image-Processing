@@ -1,8 +1,5 @@
-﻿
-using ImageProcessing.Core;
-using ImageProcessing.Utils;
-using System;
-using System.Drawing;
+﻿using ImageProcessing.Utils;
+
 
 namespace ImageProcessing.Core.Processers {
     public class InvertColor : ImageProcesser {

@@ -6,7 +6,6 @@ using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Controls;
 
 namespace ImageProcessing {
