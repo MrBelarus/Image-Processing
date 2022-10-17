@@ -18,6 +18,7 @@
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Texture Compare" Click="OnTextureCompare"/>
+                <MenuItem Header="Image detector window" Click="OnImageDetectClick"/>
             </MenuItem>
         </Menu>
         <TabControl>

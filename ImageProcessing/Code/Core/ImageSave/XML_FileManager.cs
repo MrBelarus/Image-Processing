@@ -20,6 +20,11 @@ namespace ImageProcessing.Core {
 
         public static T DeserializeFromXML<T>(string path) {
             XmlSerializer serializer = new XmlSerializer(typeof(T));
+
+            if (!File.Exists(path)) {
+                return default(T);
+            }
+
             FileStream fileStream = new FileStream(path, FileMode.Open);
             T result = (T)serializer.Deserialize(fileStream);
             fileStream.Close();

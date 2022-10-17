@@ -71,6 +71,8 @@ namespace ImageProcessing {
 
             graphDisplayer = new GraphDisplayer(Graph);
             gridDisplayer = new GridDisplayer(imageMatrix);
+
+            ImageDetectDataProvider.Instance.LoadData();
         }
 
         private void OnBtnPerformClick(object sender, RoutedEventArgs e) {
@@ -180,6 +182,10 @@ namespace ImageProcessing {
                     return;
                 }
             }
+        }
+
+        private void OnImageDetectClick(object sender, RoutedEventArgs e) {
+            new ImageDetectWindow().Show();
         }
 
         private void OnMenuExitClick(object sender, RoutedEventArgs e) {

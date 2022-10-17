@@ -12,7 +12,7 @@ namespace ImageProcessing.Core {
         /// <summary>
         /// returns matrix where white is 0 and black is 1
         /// </summary>
-        public static int[] GetA8Matrix(ImageData imageData) {
+        public static int[] GetA8Matrix(ImageData imageData, bool onlyForBlackPixels = false) {
             int width = imageData.Width, height = imageData.Height;
             int[] a8matrix = new int[width * height];
 
@@ -22,6 +22,10 @@ namespace ImageProcessing.Core {
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
+                    if (onlyForBlackPixels && pixels[y * width + x] != 0) {
+                        continue;
+                    }
+
                     p2 = y == 0 ? 1 : pixels[(y - 1) * width + x];
                     p3 = (y == 0 || x == width - 1) ? 1 : pixels[(y - 1) * width + x + 1];
                     p4 = (x == width - 1) ? 1 : pixels[y * width + x + 1];
@@ -43,7 +47,7 @@ namespace ImageProcessing.Core {
         /// <summary>
         /// returns matrix where white is 1 and black is 0
         /// </summary>
-        public static int[] GetA8(ImageData imageData) {
+        public static int[] GetA8(ImageData imageData, bool onlyForBlackPixels = false) {
             int width = imageData.Width, height = imageData.Height;
             int[] a8matrix = new int[width * height];
 
@@ -53,6 +57,10 @@ namespace ImageProcessing.Core {
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
+                    if (onlyForBlackPixels && pixels[y * width + x] != 0) {
+                        continue;
+                    }
+
                     p2 = y == 0 ? 1 : pixels[(y - 1) * width + x];
                     p3 = (y == 0 || x == width - 1) ? 1 : pixels[(y - 1) * width + x + 1];
                     p4 = (x == width - 1) ? 1 : pixels[y * width + x + 1];
@@ -71,7 +79,7 @@ namespace ImageProcessing.Core {
             return a8matrix;
         }
 
-        public static int[] GetB8Matrix(ImageData imageData) {
+        public static int[] GetB8Matrix(ImageData imageData, bool onlyForBlackPixels = false) {
             int width = imageData.Width, height = imageData.Height;
             int[] b8matrix = new int[width * height];
 
@@ -81,6 +89,9 @@ namespace ImageProcessing.Core {
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
+                    if (onlyForBlackPixels && pixels[y * width + x] != 0) {
+                        continue;
+                    }
                     p2 = y == 0 ? 1 : pixels[(y - 1) * width + x];
                     p3 = (y == 0 || x == width - 1) ? 1 : pixels[(y - 1) * width + x + 1];
                     p4 = (x == width - 1) ? 1 : pixels[y * width + x + 1];
@@ -98,12 +109,16 @@ namespace ImageProcessing.Core {
             return b8matrix;
         }
 
-        public static int[] GetCnMatrix(ImageData imageData) {
-            int[] a8 = GetA8Matrix(imageData);
-            int[] b8 = GetB8Matrix(imageData);
+        public static int[] GetCnMatrix(ImageData imageData, bool onlyForBlackPixels = true) {
+            int[] a8 = GetA8Matrix(imageData, onlyForBlackPixels);
+            int[] b8 = GetB8Matrix(imageData, onlyForBlackPixels);
             var result = new int[a8.Length];
+            var pixels = imageData.GetPixels();
 
             for (int i = 0; i < a8.Length; i++) {
+                if (onlyForBlackPixels && pixels[i] != 0) {
+                    continue;
+                }
                 result[i] = a8[i] - b8[i];
             }
             return result;

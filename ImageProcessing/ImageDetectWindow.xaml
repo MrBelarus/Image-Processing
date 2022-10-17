@@ -1,0 +1,29 @@
+﻿<Window x:Class="ImageProcessing.ImageDetectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageProcessing"
+        mc:Ignorable="d"
+        Title="ImageDetectWindow" Height="450" Width="800">
+    <Grid>
+        <StackPanel x:Name="pnlWorkSpaceImage" Margin="51,92,438,45">
+            <ScrollViewer x:Name="scrollViewImage" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="297"/>
+        </StackPanel>
+        <Canvas x:Name="imageCanvas" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}" Margin="27,75,438,29">
+            <Canvas.Background>
+                <VisualBrush Stretch="None">
+                    <VisualBrush.Visual>
+                        <Image x:Name="workSpaceImage" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                    </VisualBrush.Visual>
+                </VisualBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Button x:Name="btnSaveToDB" Content="Save to DB" HorizontalAlignment="Left" Margin="418,169,0,0" VerticalAlignment="Top" Click="btnSaveToDB_Click"/>
+        <TextBox x:Name="txtClass" HorizontalAlignment="Left" Margin="414,100,0,0" Text="Class" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtNy" HorizontalAlignment="Left" Margin="414,123,0,0" Text="Ny" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtNk" HorizontalAlignment="Left" Margin="414,146,0,0" Text="Nk" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnLoadImg" Content="Load image" HorizontalAlignment="Left" Margin="414,75,0,0" VerticalAlignment="Top" Click="btnLoadImg_Click"/>
+        <Button x:Name="btnDetectClass" Content="Detect class" HorizontalAlignment="Left" Margin="539,99,0,0" VerticalAlignment="Top" Click="btnDetectClass_Click"/>
+    </Grid>
+</Window>
