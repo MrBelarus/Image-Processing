@@ -2,17 +2,8 @@
 using ImageProcessing.Core.Processers;
 using ImageProcessing.Utils;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ImageProcessing {
     /// <summary>
@@ -20,7 +11,7 @@ namespace ImageProcessing {
     /// </summary>
     public partial class ImageDetectWindow : Window {
         private ImageData imgOriginal;
-        private string imgPath;
+        private string imgName;
 
         public ImageDetectWindow() {
             InitializeComponent();
@@ -31,7 +22,9 @@ namespace ImageProcessing {
             if (openFileDialog.ShowDialog() == true) {
                 //load & remember bitmap
                 LoadImage(openFileDialog.FileName);
-                imgPath = openFileDialog.FileName;
+                imgName = openFileDialog.SafeFileName;
+
+                ImageDetectDataProvider.Instance.CopyImgToBin(openFileDialog.FileName, openFileDialog.SafeFileName);
             }
 
             CalculateImageSpecialPoints();
@@ -39,15 +32,15 @@ namespace ImageProcessing {
 
         private void LoadImage(string fileName) {
             imgOriginal = new ImageData(fileName);
-            if (imgOriginal.ColorDepth != 1) {
-                
-                imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true, 10);//new ConvertToBinaryThreshold().Process(imgOriginal);
-                imgOriginal = new ZhangSuen().Process(new ImageData(imgOriginal));
-            }
-
             if (imgOriginal == null) {
                 MessageBox.Show("Failed to load image", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+
+            if (imgOriginal.ColorDepth != 1) {
+                
+                imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true, 128); //new ConvertToBinaryThreshold().Process(imgOriginal);
+                imgOriginal = new ZhangSuen().Process(new ImageData(imgOriginal));
             }
 
             UpdateOriginalImageUI(imgOriginal);
@@ -79,7 +72,7 @@ namespace ImageProcessing {
                 className = txtClass.Text,
                 nodesBranchesCount = int.Parse(txtNy.Text.Split('\t')[1]),
                 nodesEndCount = int.Parse(txtNk.Text.Split('\t')[1]),
-                imgPath = imgPath,
+                imgName = imgName,
             });
 
             MessageBox.Show("Save was successful!");

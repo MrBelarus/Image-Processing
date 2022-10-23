@@ -4,7 +4,7 @@ namespace ImageProcessing.Core {
         public ImageDetectData() { }
 
         public string className = "A";
-        public string imgPath;
+        public string imgName;
 
         public int nodesBranchesCount = 0;
         public int nodesEndCount = 0;
