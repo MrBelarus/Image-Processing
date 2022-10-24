@@ -265,8 +265,9 @@ namespace ImageProcessing {
                         image.Width, image.Height);
                     break;
                 case "Cn matrix":
-                    gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetCnMatrix(image),
-                        image.Width, image.Height);
+                    int[] matrix = ImageMatrixCalculator.GetCnMatrix(image);
+                    gridDisplayer.DisplayMatrix(matrix, image.Width, image.Height);
+                    gridDisplayer.ChangeColorForCnMatrix(matrix, image.Width, image.Height);
                     break;
                 case "Manhattan Distance":
                     gridDisplayer.DisplayMatrix(ImageMatrixCalculator.GetManhattanDistanceMatrix(image),

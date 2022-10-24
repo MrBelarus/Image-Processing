@@ -12,9 +12,12 @@ namespace ImageProcessing {
     public partial class ImageDetectWindow : Window {
         private ImageData imgOriginal;
         private string imgName;
+        private GridDisplayer imgClassTable;
 
         public ImageDetectWindow() {
             InitializeComponent();
+
+            imgClassTable = new GridDisplayer(classTable);
         }
 
         private void btnLoadImg_Click(object sender, RoutedEventArgs e) {
@@ -25,6 +28,9 @@ namespace ImageProcessing {
                 imgName = openFileDialog.SafeFileName;
 
                 ImageDetectDataProvider.Instance.CopyImgToBin(openFileDialog.FileName, openFileDialog.SafeFileName);
+            }
+            else {
+                return;
             }
 
             CalculateImageSpecialPoints();
@@ -38,7 +44,7 @@ namespace ImageProcessing {
             }
 
             if (imgOriginal.ColorDepth != 1) {
-                
+
                 imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true, 128); //new ConvertToBinaryThreshold().Process(imgOriginal);
                 imgOriginal = new ZhangSuen().Process(new ImageData(imgOriginal));
             }
@@ -50,10 +56,10 @@ namespace ImageProcessing {
             int[] matrixCn = ImageMatrixCalculator.GetCnMatrix(imgOriginal, true);
             int Ny = 0, Nk = 0;
             foreach (int Cn in matrixCn) {
-                if(Cn == 1) {
+                if (Cn == 1) {
                     Nk++;
                 }
-                else if(Cn > 2) {
+                else if (Cn > 2) {
                     Ny++;
                 }
             }
@@ -80,7 +86,36 @@ namespace ImageProcessing {
         }
 
         private void btnDetectClass_Click(object sender, RoutedEventArgs e) {
+            
+        }
 
+        private void btnTableDisplay_Click(object sender, RoutedEventArgs e) {
+            var repoImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
+            int columnsCount = ImageDetectData.TotalVariables;
+            string[] colomnNames = new string[] { "Ny", "Nk" };
+            string[] rowNames = new string[repoImgs.Length];
+            float[][] dataArray = new float[repoImgs.Length][];
+
+            for (int i = 0; i < dataArray.Length; i++) {
+                dataArray[i] = new float[columnsCount];
+
+                var img = repoImgs[i];
+                dataArray[i][0] = img.nodesBranchesCount;
+                dataArray[i][1] = img.nodesEndCount;
+                rowNames[i] = img.className;
+            }
+
+            float[] tableData = new float[columnsCount * dataArray.Length];
+            int index = 0;
+            foreach (float[] line in dataArray) {
+                foreach(float value in line) {
+                    tableData[index] = value;
+                    index++;
+                }
+            }
+
+            imgClassTable.DisplayMatrix<float>(tableData, columnsCount, rowNames.Length, 
+                                                    rowNames, colomnNames);
         }
 
         public void UpdateOriginalImageUI(ImageData image) {

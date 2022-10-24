@@ -6,6 +6,8 @@ namespace ImageProcessing.Core {
         public string className = "A";
         public string imgName;
 
+        public const int TotalVariables = 2;
+
         public int nodesBranchesCount = 0;
         public int nodesEndCount = 0;
     }
