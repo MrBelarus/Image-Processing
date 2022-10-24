@@ -20,7 +20,7 @@ namespace ImageProcessing {
     /// </summary>
     public partial class ImageDetectWindow : Window {
         private ImageData imgOriginal;
-        private string imgPath;
+        private string imgName;
 
         public ImageDetectWindow() {
             InitializeComponent();
@@ -31,7 +31,7 @@ namespace ImageProcessing {
             if (openFileDialog.ShowDialog() == true) {
                 //load & remember bitmap
                 LoadImage(openFileDialog.FileName);
-                imgPath = openFileDialog.FileName;
+                imgName = openFileDialog.FileName;
             }
 
             CalculateImageSpecialPoints();
@@ -41,7 +41,7 @@ namespace ImageProcessing {
             imgOriginal = new ImageData(fileName);
             if (imgOriginal.ColorDepth != 1) {
                 
-                imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true, 10);//new ConvertToBinaryThreshold().Process(imgOriginal);
+                imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true);//new ConvertToBinaryThreshold().Process(imgOriginal);
                 imgOriginal = new ZhangSuen().Process(new ImageData(imgOriginal));
             }
 
@@ -79,7 +79,7 @@ namespace ImageProcessing {
                 className = txtClass.Text,
                 nodesBranchesCount = int.Parse(txtNy.Text.Split('\t')[1]),
                 nodesEndCount = int.Parse(txtNk.Text.Split('\t')[1]),
-                imgPath = imgPath,
+                imgPath = "letters\\" + imgName,
             });
 
             MessageBox.Show("Save was successful!");
