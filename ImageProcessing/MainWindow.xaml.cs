@@ -60,6 +60,7 @@ namespace ImageProcessing {
             "R",
             "G",
             "B",
+            "ImageDetectNyk",
         };
 
         public MainWindow() {
@@ -341,6 +342,9 @@ namespace ImageProcessing {
                 case "B":
                     dataArray = imgOriginal.GetChannelValues(0x0000ff, 0);
                     break;
+                case "ImageDetectNyk":
+                    graphDisplayer.DisplayDetectDataPoints(ImageDetectDataProvider.Instance.ImageDetectDatas);
+                    return;
             }
 
             points = ImageMatrixCalculator.CalculateValuesFrequences(dataArray);

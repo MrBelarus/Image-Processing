@@ -27,6 +27,7 @@
                 <TextBox x:Name="txtNk" HorizontalAlignment="Left" Margin="414,146,0,0" Text="Nk" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                 <Button x:Name="btnLoadImg" Content="Load image" HorizontalAlignment="Left" Margin="414,75,0,0" VerticalAlignment="Top" Click="btnLoadImg_Click"/>
                 <Button x:Name="btnDetectClass" Content="Detect class" HorizontalAlignment="Left" Margin="539,99,0,0" VerticalAlignment="Top" Click="btnDetectClass_Click"/>
+                <Button x:Name="btnChart" Content="Chart" HorizontalAlignment="Left" Margin="542,126,0,0" VerticalAlignment="Top" Click="btnChart_Click"/>
             </Grid>
         </TabItem>
         <TabItem Header="ClassTable">

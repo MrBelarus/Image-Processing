@@ -6,9 +6,12 @@ namespace ImageProcessing.Core {
         public string className = "A";
         public string imgName;
 
-        public const int TotalVariables = 2;
+        public const int TotalVariables = 3;
 
         public int nodesBranchesCount = 0;
         public int nodesEndCount = 0;
+
+        [System.NonSerialized]
+        public float distance;
     }
 }
