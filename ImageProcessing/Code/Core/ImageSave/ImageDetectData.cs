@@ -11,6 +11,9 @@ namespace ImageProcessing.Core {
         public int nodesBranchesCount = 0;
         public int nodesEndCount = 0;
 
+        public int zondRedIntersectCount = 0;
+        public int zondBlueIntersectCount = 0;
+
         [System.NonSerialized]
         public float distance;
     }

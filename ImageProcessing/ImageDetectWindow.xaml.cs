@@ -1,5 +1,4 @@
-﻿using Aspose.Cells;
-using ImageProcessing.Core;
+﻿using ImageProcessing.Core;
 using ImageProcessing.Core.Processers;
 using ImageProcessing.Utils;
 using Microsoft.Win32;
@@ -38,8 +37,11 @@ namespace ImageProcessing {
             }
 
             CalculateImageSpecialPoints();
+            CalculateZondValues();
         }
 
+
+        int zondNothingColor = 0x00FFFFFF;
         private void LoadImage(string fileName) {
             imgOriginal = new ImageData(fileName);
             if (imgOriginal == null) {
@@ -47,13 +49,31 @@ namespace ImageProcessing {
                 return;
             }
 
+
             if (imgOriginal.ColorDepth != 1) {
 
                 imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true, 128); //new ConvertToBinaryThreshold().Process(imgOriginal);
                 imgOriginal = new ZhangSuen().Process(new ImageData(imgOriginal));
             }
 
-            UpdateOriginalImageUI(imgOriginal);
+            ImageData zondImgOverlay = new ImageData(imgOriginal);
+            zondImgOverlay = ImageUtility.Convert1BitToGray24Bit(zondImgOverlay);
+            int[] pixels = imgOriginal.GetPixels(),
+                zondBluePixels = ImageDetectDataProvider.Instance.zondBlue.GetPixels(),
+                zondRedPixels = ImageDetectDataProvider.Instance.zondRed.GetPixels();
+            for (int i = 0; i < pixels.Length; i++) {
+                bool hasPixel = pixels[i] == 0;
+                if (zondBluePixels[i] != zondNothingColor) {
+                    pixels[i] = hasPixel ? zondBluePixels[i] / 2 : zondBluePixels[i];
+                }
+                if (zondRedPixels[i] != zondNothingColor) {
+                    pixels[i] = hasPixel ? zondRedPixels[i] / 2 : zondRedPixels[i];
+                }
+            }
+            zondImgOverlay.SetPixels(pixels);
+            zondImgOverlay.ApplyChanges();
+
+            UpdateOriginalImageUI(zondImgOverlay);
         }
 
         private void CalculateImageSpecialPoints() {
@@ -72,16 +92,50 @@ namespace ImageProcessing {
             txtNy.Text = "Ny :\t" + Ny.ToString();
         }
 
+        private void CalculateZondValues() {
+            var detectProvider = ImageDetectDataProvider.Instance;
+
+
+            int[] pixels = imgOriginal.GetPixels();
+            int[] redZondPixels = detectProvider.zondRed.GetPixels();
+            int[] blueZondPixels = detectProvider.zondBlue.GetPixels();
+
+            if (pixels.Length != redZondPixels.Length || blueZondPixels.Length != pixels.Length) {
+                MessageBox.Show("Image size should be same as zond size", "error");
+                return;
+            }
+
+            int blueZondCounter = 0, redZondCounter = 0;
+            for (int i = 0; i < pixels.Length; i++) {
+                if (pixels[i] != 0) {
+                    continue;
+                }
+
+                if (blueZondPixels[i] != zondNothingColor) {
+                    blueZondCounter++;
+                }
+                if (redZondPixels[i] != zondNothingColor) {
+                    redZondCounter++;
+                }
+            }
+
+            txtZondBlue.Text = "Blue z\t" + blueZondCounter.ToString();
+            txtZondRed.Text = "Red z\t" + redZondCounter.ToString();
+        }
+
         private void btnSaveToDB_Click(object sender, RoutedEventArgs e) {
             if (txtClass.Text == "Class" || txtClass.Text == string.Empty) {
                 MessageBox.Show("Class name not set!", "error");
                 return;
             }
 
+
             ImageDetectDataProvider.Instance.AddData(new ImageDetectData() {
                 className = txtClass.Text,
                 nodesBranchesCount = int.Parse(txtNy.Text.Split('\t')[1]),
                 nodesEndCount = int.Parse(txtNk.Text.Split('\t')[1]),
+                zondBlueIntersectCount = int.Parse(txtZondBlue.Text.Split('\t')[1]),
+                zondRedIntersectCount = int.Parse(txtZondRed.Text.Split('\t')[1]),
                 imgName = imgName,
             });
 
@@ -102,9 +156,9 @@ namespace ImageProcessing {
             int k = 3;
 
             var detectInfoImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
-            for(int i = 0; i < detectInfoImgs.Length; i++) {
+            for (int i = 0; i < detectInfoImgs.Length; i++) {
                 detectInfoImgs[i].distance = (float)Math.Sqrt(
-                    Math.Pow(nodesEndCount - detectInfoImgs[i].nodesEndCount, 2) + 
+                    Math.Pow(nodesEndCount - detectInfoImgs[i].nodesEndCount, 2) +
                     Math.Pow(nodesBranchesCount - detectInfoImgs[i].nodesBranchesCount, 2));
             }
 
@@ -123,7 +177,7 @@ namespace ImageProcessing {
 
             int maxValue = int.MinValue;
             string maxClass = string.Empty;
-            foreach(var keypair in detectDataCount) {
+            foreach (var keypair in detectDataCount) {
                 if (keypair.Value > maxValue) {
                     maxValue = keypair.Value;
                     maxClass = keypair.Key;
@@ -150,41 +204,6 @@ namespace ImageProcessing {
             }
         }
 
-        private void btnChart_Click(object sender, RoutedEventArgs e) {
-            CreateChart(ImageDetectDataProvider.Instance.ImageDetectDatas);
-        }
-
-        private void CreateChart(ImageDetectData[] dots) {
-            // Instantiate a Workbook object
-            Workbook workbook = new Workbook();
-
-            // Obtain the reference of the first worksheet
-            Worksheet worksheet = workbook.Worksheets[0];
-
-
-            worksheet.Cells["A1"].PutValue("Ny");
-            worksheet.Cells["B1"].PutValue("Nk");
-            worksheet.Cells["C1"].PutValue("Class");
-
-            for (int i = 0; i < dots.Length; i++) {
-                worksheet.Cells["A" + (2 + i).ToString()].PutValue(dots[i].nodesBranchesCount);
-                worksheet.Cells["B" + (2 + i).ToString()].PutValue(dots[i].nodesEndCount);
-                worksheet.Cells["C" + (2 + i).ToString()].PutValue(dots[i].className);
-            }
-
-            // Add a chart to the worksheet
-            int chartIndex = worksheet.Charts.Add(Aspose.Cells.Charts.ChartType.Scatter, 5, 0, 15, 5);
-
-            // Access the instance of the newly added chart
-            Aspose.Cells.Charts.Chart chart = worksheet.Charts[chartIndex];
-
-            // Set chart data source as the range  "A1:C4"
-            chart.SetChartDataRange("A1:B" + (1 + dots.Length).ToString(), true);
-
-            // Save the Excel file
-            workbook.Save("Column-Chart.xls");
-        }
-
         private void btnTableDisplay_Click(object sender, RoutedEventArgs e) {
             var repoImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
             string[] colomnNames = new string[] { "Ny", "Nk", "D" };
@@ -205,13 +224,13 @@ namespace ImageProcessing {
             float[] tableData = new float[columnsCount * dataArray.Length];
             int index = 0;
             foreach (float[] line in dataArray) {
-                foreach(float value in line) {
+                foreach (float value in line) {
                     tableData[index] = value;
                     index++;
                 }
             }
 
-            imgClassTable.DisplayMatrix<float>(tableData, columnsCount, rowNames.Length, 
+            imgClassTable.DisplayMatrix<float>(tableData, columnsCount, rowNames.Length,
                                                     rowNames, colomnNames);
         }
 

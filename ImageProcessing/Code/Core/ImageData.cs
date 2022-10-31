@@ -281,6 +281,14 @@ namespace ImageProcessing.Core {
             }
         }
 
+        public void SetPixels(int[] pixelsData) {
+            for(int y =0; y < Height; y++) {
+                for(int x = 0; x < Width; x++) {
+                    SetPixel(x, y, pixelsData[y * Width + x]);
+                }
+            }
+        }
+
         /// <param name="value">[0..255]</param>
         public void SetPixelGrey(int x, int y, int value) {
             value = MathModule.Clamp(value, 0, 255);

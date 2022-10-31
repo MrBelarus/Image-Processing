@@ -9,10 +9,14 @@
     <TabControl>
         <TabItem Header="ImageLoad">
             <Grid>
-                <StackPanel x:Name="pnlWorkSpaceImage" Margin="51,92,438,45">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="26*"/>
+                    <ColumnDefinition Width="371*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel x:Name="pnlWorkSpaceImage" Margin="51,20,438,80" Grid.ColumnSpan="2">
                     <ScrollViewer x:Name="scrollViewImage" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="297"/>
                 </StackPanel>
-                <Canvas x:Name="imageCanvas" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}" Margin="27,75,438,29">
+                <Canvas x:Name="imageCanvas" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}" Margin="140,226,602,180" Grid.Column="1">
                     <Canvas.Background>
                         <VisualBrush Stretch="None">
                             <VisualBrush.Visual>
@@ -21,13 +25,14 @@
                         </VisualBrush>
                     </Canvas.Background>
                 </Canvas>
-                <Button x:Name="btnSaveToDB" Content="Save to DB" HorizontalAlignment="Left" Margin="418,169,0,0" VerticalAlignment="Top" Click="btnSaveToDB_Click"/>
-                <TextBox x:Name="txtClass" HorizontalAlignment="Left" Margin="414,100,0,0" Text="Class" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                <TextBox x:Name="txtNy" HorizontalAlignment="Left" Margin="414,123,0,0" Text="Ny" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                <TextBox x:Name="txtNk" HorizontalAlignment="Left" Margin="414,146,0,0" Text="Nk" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                <Button x:Name="btnLoadImg" Content="Load image" HorizontalAlignment="Left" Margin="414,75,0,0" VerticalAlignment="Top" Click="btnLoadImg_Click"/>
-                <Button x:Name="btnDetectClass" Content="Detect class" HorizontalAlignment="Left" Margin="539,99,0,0" VerticalAlignment="Top" Click="btnDetectClass_Click"/>
-                <Button x:Name="btnChart" Content="Chart" HorizontalAlignment="Left" Margin="542,126,0,0" VerticalAlignment="Top" Click="btnChart_Click"/>
+                <Button x:Name="btnSaveToDB" Content="Save to DB" HorizontalAlignment="Left" Margin="366,0,0,0" VerticalAlignment="Center" Click="btnSaveToDB_Click" Grid.Column="1"/>
+                <TextBox x:Name="txtClass" HorizontalAlignment="Left" Margin="362,100,0,0" Text="Class" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <TextBox x:Name="txtNy" HorizontalAlignment="Left" Margin="362,123,0,0" Text="Ny" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <TextBox x:Name="txtNk" HorizontalAlignment="Left" Margin="362,146,0,0" Text="Nk" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <Button x:Name="btnLoadImg" Content="Load image" HorizontalAlignment="Left" Margin="362,75,0,0" VerticalAlignment="Top" Click="btnLoadImg_Click" Grid.Column="1"/>
+                <Button x:Name="btnDetectClass" Content="Detect class" HorizontalAlignment="Left" Margin="487,99,0,0" VerticalAlignment="Top" Click="btnDetectClass_Click" Grid.Column="1"/>
+                <TextBox x:Name="txtZondRed" HorizontalAlignment="Left" Margin="487,123,0,0" Text="ZRED" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <TextBox x:Name="txtZondBlue" HorizontalAlignment="Left" Margin="487,146,0,0" Text="ZBLUE" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
             </Grid>
         </TabItem>
         <TabItem Header="ClassTable">
