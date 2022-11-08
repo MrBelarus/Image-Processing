@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 namespace ImageProcessing.Core {
     public class ImageData {
         private Bitmap _bitmap;
+        public bool IsImageLoaded => _bitmap != null;
 
         public ImageData(Bitmap bitmap) {
             _bitmap = bitmap;

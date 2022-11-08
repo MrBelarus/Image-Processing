@@ -40,7 +40,6 @@ namespace ImageProcessing {
             CalculateZondValues();
         }
 
-
         int zondNothingColor = 0x00FFFFFF;
         private void LoadImage(string fileName) {
             imgOriginal = new ImageData(fileName);
@@ -56,24 +55,29 @@ namespace ImageProcessing {
                 imgOriginal = new ZhangSuen().Process(new ImageData(imgOriginal));
             }
 
-            ImageData zondImgOverlay = new ImageData(imgOriginal);
-            zondImgOverlay = ImageUtility.Convert1BitToGray24Bit(zondImgOverlay);
-            int[] pixels = imgOriginal.GetPixels(),
-                zondBluePixels = ImageDetectDataProvider.Instance.zondBlue.GetPixels(),
-                zondRedPixels = ImageDetectDataProvider.Instance.zondRed.GetPixels();
-            for (int i = 0; i < pixels.Length; i++) {
-                bool hasPixel = pixels[i] == 0;
-                if (zondBluePixels[i] != zondNothingColor) {
-                    pixels[i] = hasPixel ? zondBluePixels[i] / 2 : zondBluePixels[i];
+            if (ImageDetectDataProvider.Instance.zondBlue.IsImageLoaded) {
+                ImageData zondImgOverlay = new ImageData(imgOriginal);
+                zondImgOverlay = ImageUtility.Convert1BitToGray24Bit(zondImgOverlay);
+                int[] pixels = imgOriginal.GetPixels(),
+                    zondBluePixels = ImageDetectDataProvider.Instance.zondBlue.GetPixels(),
+                    zondRedPixels = ImageDetectDataProvider.Instance.zondRed.GetPixels();
+                for (int i = 0; i < pixels.Length; i++) {
+                    bool hasPixel = pixels[i] == 0;
+                    if (zondBluePixels[i] != zondNothingColor) {
+                        pixels[i] = hasPixel ? zondBluePixels[i] / 2 : zondBluePixels[i];
+                    }
+                    if (zondRedPixels[i] != zondNothingColor) {
+                        pixels[i] = hasPixel ? zondRedPixels[i] / 2 : zondRedPixels[i];
+                    }
                 }
-                if (zondRedPixels[i] != zondNothingColor) {
-                    pixels[i] = hasPixel ? zondRedPixels[i] / 2 : zondRedPixels[i];
-                }
-            }
-            zondImgOverlay.SetPixels(pixels);
-            zondImgOverlay.ApplyChanges();
+                zondImgOverlay.SetPixels(pixels);
+                zondImgOverlay.ApplyChanges();
 
-            UpdateOriginalImageUI(zondImgOverlay);
+                UpdateOriginalImageUI(zondImgOverlay);
+            }
+            else {
+                UpdateOriginalImageUI(imgOriginal);
+            }
         }
 
         private void CalculateImageSpecialPoints() {
@@ -163,7 +167,7 @@ namespace ImageProcessing {
             }
 
             List<ImageDetectData> sortedByDist = new List<ImageDetectData>(detectInfoImgs);
-            sortedByDist.OrderBy(img => img.distance);
+            sortedByDist = new List<ImageDetectData>(sortedByDist.OrderBy(img => img.distance));
             Dictionary<string, int> detectDataCount = new Dictionary<string, int>();
             bool allDifferent = true;
             for (int i = 0; i < k; i++) {

@@ -16,7 +16,13 @@
                 <StackPanel x:Name="pnlWorkSpaceImage" Margin="51,20,438,80" Grid.ColumnSpan="2">
                     <ScrollViewer x:Name="scrollViewImage" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="297"/>
                 </StackPanel>
-                <Canvas x:Name="imageCanvas" Width="{Binding ActualWidth, ElementName=workSpaceImage}" Height="{Binding ActualHeight, ElementName=workSpaceImage}" Margin="140,226,602,180" Grid.Column="1">
+                <Canvas x:Name="imageCanvas" Width="Auto" Height="Auto" Margin="8,11,436,116" Grid.Column="1" RenderTransformOrigin="0.5,0.5">
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
                     <Canvas.Background>
                         <VisualBrush Stretch="None">
                             <VisualBrush.Visual>
