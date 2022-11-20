@@ -40,6 +40,18 @@ namespace ImageProcessing {
             CalculateZondValues();
         }
 
+        private void btnRefreshDB_Click(object sender, RoutedEventArgs e) {
+            ImageDetectData[] images = ImageDetectDataProvider.Instance.ImageDetectDatas;
+            foreach(ImageDetectData detectData in images) {
+                LoadImage(ImageDetectDataProvider.ImgRepoFolder + detectData.imgName);
+                imgName = detectData.imgName;
+                txtClass.Text = detectData.className;
+                CalculateImageSpecialPoints();
+                CalculateZondValues();
+                btnSaveToDB_Click(sender, e);
+            }
+        }
+
         int zondNothingColor = 0x00FFFFFF;
         private void LoadImage(string fileName) {
             imgOriginal = new ImageData(fileName);
@@ -50,7 +62,6 @@ namespace ImageProcessing {
 
 
             if (imgOriginal.ColorDepth != 1) {
-
                 imgOriginal = ImageUtility.ConvertToBinary(imgOriginal, true, 128); //new ConvertToBinaryThreshold().Process(imgOriginal);
                 imgOriginal = new ZhangSuen().Process(new ImageData(imgOriginal));
             }
@@ -58,25 +69,29 @@ namespace ImageProcessing {
             if (ImageDetectDataProvider.Instance.zondBlue.IsImageLoaded) {
                 ImageData zondImgOverlay = new ImageData(imgOriginal);
                 zondImgOverlay = ImageUtility.Convert1BitToGray24Bit(zondImgOverlay);
-                int[] pixels = imgOriginal.GetPixels(),
+                int[] pixels = zondImgOverlay.GetPixels(),
                     zondBluePixels = ImageDetectDataProvider.Instance.zondBlue.GetPixels(),
                     zondRedPixels = ImageDetectDataProvider.Instance.zondRed.GetPixels();
                 for (int i = 0; i < pixels.Length; i++) {
+
+                    if (pixels[i] > 0) pixels[i] = 0xFFFFFF;
+                    else pixels[i] = 0;
+
                     bool hasPixel = pixels[i] == 0;
                     if (zondBluePixels[i] != zondNothingColor) {
-                        pixels[i] = hasPixel ? zondBluePixels[i] / 2 : zondBluePixels[i];
+                        pixels[i] = hasPixel ? 0xAAAAAA : zondBluePixels[i];
                     }
                     if (zondRedPixels[i] != zondNothingColor) {
-                        pixels[i] = hasPixel ? zondRedPixels[i] / 2 : zondRedPixels[i];
+                        pixels[i] = hasPixel ? 0x999999 : zondRedPixels[i];
                     }
                 }
                 zondImgOverlay.SetPixels(pixels);
                 zondImgOverlay.ApplyChanges();
 
-                UpdateOriginalImageUI(zondImgOverlay);
+                UpdateImageUI(zondImgOverlay);
             }
             else {
-                UpdateOriginalImageUI(imgOriginal);
+                UpdateImageUI(imgOriginal);
             }
         }
 
@@ -147,7 +162,64 @@ namespace ImageProcessing {
             ImageDetectDataProvider.Instance.SaveData();
         }
 
-        private void btnDetectClass_Click(object sender, RoutedEventArgs e) {
+        private void btnTableDisplay_Click(object sender, RoutedEventArgs e) {
+            var repoImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
+            string[] colomnNames = new string[] { "Ny", "Nk", "ZRed", "ZBlue", "D_NkNy", "D_Zonds" };
+            int columnsCount = colomnNames.Length;
+            string[] rowNames = new string[repoImgs.Length];
+            float[][] dataArray = new float[repoImgs.Length][];
+
+            for (int i = 0; i < dataArray.Length; i++) {
+                dataArray[i] = new float[columnsCount];
+
+                var img = repoImgs[i];
+                dataArray[i][0] = img.nodesBranchesCount;
+                dataArray[i][1] = img.nodesEndCount;
+                dataArray[i][2] = img.zondRedIntersectCount;
+                dataArray[i][3] = img.zondBlueIntersectCount;
+                dataArray[i][4] = img.distance_NkNy;
+                dataArray[i][5] = img.distance_Zonds;
+                rowNames[i] = img.className;
+            }
+
+            float[] tableData = new float[columnsCount * dataArray.Length];
+            int index = 0;
+            foreach (float[] line in dataArray) {
+                foreach (float value in line) {
+                    tableData[index] = value;
+                    index++;
+                }
+            }
+
+            imgClassTable.DisplayMatrix<float>(tableData, columnsCount, rowNames.Length,
+                                                    rowNames, colomnNames);
+        }
+
+        public void UpdateImageUI(ImageData image) {
+            UpdateImageSize(image, this.workSpaceImage, this.imageCanvas);
+        }
+
+        private void UpdateImageSize(ImageData imgData, Image workSpaceImage, Canvas imgCanvas) {
+            workSpaceImage.Source = imgData.GetBitmapImage();
+
+            if (imgData.Width < 100) {
+                workSpaceImage.Width = imgData.Width * 4;
+                workSpaceImage.Height = imgData.Height * 4;
+            }
+            else if (imgData.Width < 250) {
+                workSpaceImage.Width = imgData.Width * 2;
+                workSpaceImage.Height = imgData.Height * 2;
+            }
+            else {
+                workSpaceImage.Width = imgData.Width;
+                workSpaceImage.Height = imgData.Height;
+            }
+
+            imgCanvas.Width = workSpaceImage.Width;
+            imgCanvas.Height = workSpaceImage.Height;
+        }
+
+        private void btnDetectClassZonds_Click(object sender, RoutedEventArgs e) {
             if (imgOriginal == null) {
                 btnLoadImg_Click(sender, e);
             }
@@ -155,19 +227,20 @@ namespace ImageProcessing {
                 CalculateImageSpecialPoints();
             }
 
-            int nodesBranchesCount = int.Parse(txtNy.Text.Split('\t')[1]);
-            int nodesEndCount = int.Parse(txtNk.Text.Split('\t')[1]);
+            int zondRedCount = int.Parse(txtZondRed.Text.Split('\t')[1]);
+            int zondBlueCount = int.Parse(txtZondBlue.Text.Split('\t')[1]);
+
             int k = 3;
 
             var detectInfoImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
             for (int i = 0; i < detectInfoImgs.Length; i++) {
-                detectInfoImgs[i].distance = (float)Math.Sqrt(
-                    Math.Pow(nodesEndCount - detectInfoImgs[i].nodesEndCount, 2) +
-                    Math.Pow(nodesBranchesCount - detectInfoImgs[i].nodesBranchesCount, 2));
+                detectInfoImgs[i].distance_Zonds = (float)Math.Sqrt(
+                    Math.Pow(zondRedCount - detectInfoImgs[i].zondRedIntersectCount, 2) +
+                    Math.Pow(zondBlueCount - detectInfoImgs[i].zondBlueIntersectCount, 2));
             }
 
             List<ImageDetectData> sortedByDist = new List<ImageDetectData>(detectInfoImgs);
-            sortedByDist = new List<ImageDetectData>(sortedByDist.OrderBy(img => img.distance));
+            sortedByDist = new List<ImageDetectData>(sortedByDist.OrderBy(img => img.distance_Zonds));
             Dictionary<string, int> detectDataCount = new Dictionary<string, int>();
             bool allDifferent = true;
             for (int i = 0; i < k; i++) {
@@ -208,59 +281,59 @@ namespace ImageProcessing {
             }
         }
 
-        private void btnTableDisplay_Click(object sender, RoutedEventArgs e) {
-            var repoImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
-            string[] colomnNames = new string[] { "Ny", "Nk", "D" };
-            int columnsCount = ImageDetectData.TotalVariables;
-            string[] rowNames = new string[repoImgs.Length];
-            float[][] dataArray = new float[repoImgs.Length][];
+        private void btnDetectClass_NkNy_Click(object sender, RoutedEventArgs e) {
+            int nodesBranchesCount = int.Parse(txtNy.Text.Split('\t')[1]);
+            int nodesEndCount = int.Parse(txtNk.Text.Split('\t')[1]);
 
-            for (int i = 0; i < dataArray.Length; i++) {
-                dataArray[i] = new float[columnsCount];
+            int k = 3;
 
-                var img = repoImgs[i];
-                dataArray[i][0] = img.nodesBranchesCount;
-                dataArray[i][1] = img.nodesEndCount;
-                dataArray[i][2] = img.distance;
-                rowNames[i] = img.className;
+            var detectInfoImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
+            for (int i = 0; i < detectInfoImgs.Length; i++) {
+                detectInfoImgs[i].distance_NkNy = (float)Math.Sqrt(
+                    Math.Pow(nodesEndCount - detectInfoImgs[i].nodesEndCount, 2) +
+                    Math.Pow(nodesBranchesCount - detectInfoImgs[i].nodesBranchesCount, 2));
             }
 
-            float[] tableData = new float[columnsCount * dataArray.Length];
-            int index = 0;
-            foreach (float[] line in dataArray) {
-                foreach (float value in line) {
-                    tableData[index] = value;
-                    index++;
+            List<ImageDetectData> sortedByDist = new List<ImageDetectData>(detectInfoImgs);
+            sortedByDist = new List<ImageDetectData>(sortedByDist.OrderBy(img => img.distance_NkNy));
+            Dictionary<string, int> detectDataCount = new Dictionary<string, int>();
+            bool allDifferent = true;
+            for (int i = 0; i < k; i++) {
+                if (detectDataCount.ContainsKey(sortedByDist[i].className)) {
+                    detectDataCount[sortedByDist[i].className]++;
+                }
+                else {
+                    detectDataCount.Add(sortedByDist[i].className, 1);
                 }
             }
 
-            imgClassTable.DisplayMatrix<float>(tableData, columnsCount, rowNames.Length,
-                                                    rowNames, colomnNames);
-        }
-
-        public void UpdateOriginalImageUI(ImageData image) {
-            imgOriginal = image;
-            UpdateImageSize(image, this.workSpaceImage, this.imageCanvas);
-        }
-
-        private void UpdateImageSize(ImageData imgData, Image workSpaceImage, Canvas imgCanvas) {
-            workSpaceImage.Source = imgData.GetBitmapImage();
-
-            if (imgData.Width < 100) {
-                workSpaceImage.Width = imgData.Width * 4;
-                workSpaceImage.Height = imgData.Height * 4;
+            int maxValue = int.MinValue;
+            string maxClass = string.Empty;
+            foreach (var keypair in detectDataCount) {
+                if (keypair.Value > maxValue) {
+                    maxValue = keypair.Value;
+                    maxClass = keypair.Key;
+                }
             }
-            else if (imgData.Width < 250) {
-                workSpaceImage.Width = imgData.Width * 2;
-                workSpaceImage.Height = imgData.Height * 2;
+
+            int count = 0;
+            foreach (var keypair in detectDataCount) {
+                if (keypair.Value == maxValue) {
+                    count++;
+                    if (count > 1) {
+                        allDifferent = false;
+                        break;
+                    }
+                }
+            }
+
+            if (allDifferent) {
+                txtClass.Text = maxClass;
+                MessageBox.Show("Class was detected! It's " + maxClass);
             }
             else {
-                workSpaceImage.Width = imgData.Width;
-                workSpaceImage.Height = imgData.Height;
+                MessageBox.Show("Can't detect class, multiple max distances!");
             }
-
-            imgCanvas.Width = workSpaceImage.Width;
-            imgCanvas.Height = workSpaceImage.Height;
         }
     }
 }
