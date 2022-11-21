@@ -282,6 +282,13 @@ namespace ImageProcessing {
         }
 
         private void btnDetectClass_NkNy_Click(object sender, RoutedEventArgs e) {
+            if (imgOriginal == null) {
+                btnLoadImg_Click(sender, e);
+            }
+            else {
+                CalculateImageSpecialPoints();
+            }
+
             int nodesBranchesCount = int.Parse(txtNy.Text.Split('\t')[1]);
             int nodesEndCount = int.Parse(txtNk.Text.Split('\t')[1]);
 
