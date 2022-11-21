@@ -87,7 +87,7 @@ namespace ImageProcessing.Utils {
         /// </summary>
         /// <param name="original">image to convert</param>
         /// <returns>New instance of ImageData with 24bit grayscale</returns>
-        public static ImageData Convert1BitToGray24Bit(ImageData original) {
+        public static ImageData Convert1BitToGray24BitManhattenDist(ImageData original) {
             int[] pixelValues = ImageMatrixCalculator.ConvertDistanceToPixelGreyValues(
                                 ImageMatrixCalculator.GetManhattanDistanceMatrix(original));
 
@@ -98,6 +98,27 @@ namespace ImageProcessing.Utils {
                 for (int x = 0; x < data.Width; x++) {
                     int pxl = pixelValues[y * data.Width + x];
                     data.SetPixel(x, y, (pxl << 16) + (pxl << 8) + pxl);
+                }
+            }
+            data.ApplyChanges();
+
+            return data;
+        }
+
+        public static ImageData Convert1BitToGray24Bit(ImageData original) {
+            int[] pixelValues = original.GetPixels();
+
+            if (original.ColorDepth != 1) {
+                original = ConvertToBinary(original, true);
+            }
+
+            Bitmap bitmap =
+                new Bitmap(original.Width, original.Height, PixelFormat.Format24bppRgb);
+            ImageData data = new ImageData(bitmap);
+            for (int y = 0; y < data.Height; y++) {
+                for (int x = 0; x < data.Width; x++) {
+                    int pxl = pixelValues[y * data.Width + x];
+                    data.SetPixel(x, y, pxl != 0 ? 0xFFFFFF : 0);
                 }
             }
             data.ApplyChanges();

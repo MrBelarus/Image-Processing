@@ -120,6 +120,7 @@ namespace ImageProcessing {
                     ImageData img = imgProcesser.Process(new ImageData(imgOriginal));
                     if (img == null)
                         return;
+
                     imgProcessed = img;
                 }
                 catch (Exception ex) {

@@ -68,7 +68,7 @@ namespace ImageProcessing {
 
             if (ImageDetectDataProvider.Instance.zondBlue.IsImageLoaded) {
                 ImageData zondImgOverlay = new ImageData(imgOriginal);
-                zondImgOverlay = ImageUtility.Convert1BitToGray24Bit(zondImgOverlay);
+                zondImgOverlay = ImageUtility.Convert1BitToGray24BitManhattenDist(zondImgOverlay);
                 int[] pixels = zondImgOverlay.GetPixels(),
                     zondBluePixels = ImageDetectDataProvider.Instance.zondBlue.GetPixels(),
                     zondRedPixels = ImageDetectDataProvider.Instance.zondRed.GetPixels();

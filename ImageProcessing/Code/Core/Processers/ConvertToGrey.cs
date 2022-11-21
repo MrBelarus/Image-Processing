@@ -7,7 +7,7 @@ namespace ImageProcessing.Core.Processers {
             if (image.ColorDepth != 1) {
                 image = ImageUtility.ConvertToBinary(image, true, 128);
             }
-            return ImageUtility.Convert1BitToGray24Bit(image);
+            return ImageUtility.Convert1BitToGray24BitManhattenDist(image);
         }
     }
 }
