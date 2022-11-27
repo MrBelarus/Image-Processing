@@ -25,6 +25,8 @@ namespace ImageProcessing {
         private GraphDisplayer graphDisplayer;
         private GridDisplayer gridDisplayer;
 
+        private ImageDetectWindow imgDetectWindow;
+
         readonly string[] matrixDisplayOperations = new string[] {
             "Pixels",
             "RGB",
@@ -61,6 +63,7 @@ namespace ImageProcessing {
             "G",
             "B",
             "ImageDetectNyk",
+            "ImageDetectSpectrData",
         };
 
         public MainWindow() {
@@ -187,7 +190,12 @@ namespace ImageProcessing {
         }
 
         private void OnImageDetectClick(object sender, RoutedEventArgs e) {
-            new ImageDetectWindow().Show();
+            if (imgDetectWindow != null) {
+                imgDetectWindow.Close();
+            }
+
+            imgDetectWindow = new ImageDetectWindow();
+            imgDetectWindow.Show();
         }
 
         private void OnMenuExitClick(object sender, RoutedEventArgs e) {
@@ -345,6 +353,17 @@ namespace ImageProcessing {
                     break;
                 case "ImageDetectNyk":
                     graphDisplayer.DisplayDetectDataPoints(ImageDetectDataProvider.Instance.ImageDetectDatas);
+                    return;
+                case "ImageDetectSpectrData":
+                    if (imgDetectWindow == null) { 
+                        MessageBox.Show("Open img detect window first!"); 
+                        return; 
+                    }
+                    if (imgDetectWindow != null && imgDetectWindow.SpectrResult == null) { 
+                        MessageBox.Show("You have to use spectr method first in img detect window!"); 
+                        return; 
+                    }
+                    graphDisplayer.DisplayColumnGraph(imgDetectWindow.GetSpectrGistogram());
                     return;
             }
 

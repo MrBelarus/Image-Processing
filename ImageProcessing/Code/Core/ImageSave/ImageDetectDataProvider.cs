@@ -78,5 +78,14 @@ namespace ImageProcessing.Core {
             }
             return true;
         }
+
+        public int GetArrayIndexOf(ImageDetectData imageDetectData) {
+            for (int i = 0; i < imageDetectDatas.Length; i++) {
+                if (imageDetectData == imageDetectDatas[i]) {
+                    return i;
+                }
+            }
+            return -1;
+        }
     }
 }

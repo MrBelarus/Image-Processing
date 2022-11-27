@@ -2,6 +2,7 @@
 using ImageProcessing.Core.Processers;
 using ImageProcessing.Utils;
 using Microsoft.Win32;
+using SpectrMethod;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace ImageProcessing {
 
         private void btnRefreshDB_Click(object sender, RoutedEventArgs e) {
             ImageDetectData[] images = ImageDetectDataProvider.Instance.ImageDetectDatas;
-            foreach(ImageDetectData detectData in images) {
+            foreach (ImageDetectData detectData in images) {
                 LoadImage(ImageDetectDataProvider.ImgRepoFolder + detectData.imgName);
                 imgName = detectData.imgName;
                 txtClass.Text = detectData.className;
@@ -195,6 +196,35 @@ namespace ImageProcessing {
                                                     rowNames, colomnNames);
         }
 
+        private void btnPointDistancesDisplay_Click(object sender, RoutedEventArgs e) {
+            if (spectrResult == null) {
+                MessageBox.Show("Use spectr method first then this.");
+                return;
+            }
+
+            List<string> colomns = new List<string>();
+            List<string> rows = new List<string>();
+
+            var points = spectrResult.points;
+            for (int i = 0; i < points.Count; i++) {
+                colomns.Add((i + 1).ToString());
+                rows.Add((i + 1).ToString());
+            }
+
+            int numbersCount = rows.Count;
+            float[] tableData = new float[colomns.Count * rows.Count];
+            for (int i = 0; i < numbersCount; i++) {
+                for (int m = 0; m < numbersCount; m++) {
+                    PointData pointA = points.Find(p => p.number == (i + 1));
+                    PointData pointB = points.Find(p => p.number == (m + 1));
+                    tableData[i * numbersCount + m] = PointData.Distance(pointA, pointB);
+                }
+            }
+
+            imgClassTable.DisplayMatrix(tableData, colomns.Count, rows.Count,
+                                                    rows.ToArray(), colomns.ToArray());
+        }
+
         public void UpdateImageUI(ImageData image) {
             UpdateImageSize(image, this.workSpaceImage, this.imageCanvas);
         }
@@ -342,5 +372,249 @@ namespace ImageProcessing {
                 MessageBox.Show("Can't detect class, multiple max distances!");
             }
         }
+
+        float spectrT;
+        int spectrStartPointNumb = 1;
+        SpectrResult spectrResult;
+        public SpectrResult SpectrResult => spectrResult;
+
+        private void btnSpectrCount_NkNy_Click(object sender, RoutedEventArgs e) {
+            spectrResult = null;
+            bool inputCorrect = GetSpectrInputValues();
+            if (!inputCorrect) return;
+
+            spectrResult = new SpectrResult();
+            spectrResult.selectionGroupName = "NkNy";
+            List<PointData> processedPointsData = new List<PointData>();
+            ImageDetectData[] dbImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
+            List<ImageDetectData> leftImgs = new List<ImageDetectData>(dbImgs);
+
+            ImageDetectData tempImg = dbImgs[spectrStartPointNumb - 1];
+            PointData pData = new PointData(tempImg.nodesBranchesCount, tempImg.nodesEndCount);
+            pData.number = ImageDetectDataProvider.Instance.GetArrayIndexOf(tempImg) + 1;
+            processedPointsData.Add(pData);
+            leftImgs.Remove(tempImg);
+            PointData lastCenter = new PointData(pData.x, pData.y);
+
+            while (leftImgs.Count > 0) {
+                foreach (var img in leftImgs) {
+                    img.distance_NkNy = (float)Math.Sqrt(
+                        Math.Pow(lastCenter.y - img.nodesEndCount, 2) +         // y = nodesEndCount
+                        Math.Pow(lastCenter.x - img.nodesBranchesCount, 2));    // x = nodesBranchesCount
+                }
+
+                // find min dist NkNy point
+                tempImg = leftImgs[0];
+                for (int i = 0; i < leftImgs.Count; i++) {
+                    if (leftImgs[i].distance_NkNy < tempImg.distance_NkNy) {
+                        tempImg = leftImgs[i];
+                    }
+                }
+
+                // calc new center point
+                int processedPointsCount = processedPointsData.Count;
+                lastCenter.x = (lastCenter.x * processedPointsCount + tempImg.nodesBranchesCount) / (processedPointsCount + 1);
+                lastCenter.y = (lastCenter.y * processedPointsCount + tempImg.nodesEndCount) / (processedPointsCount + 1);
+
+                // add new point to processed list
+                pData = new PointData(tempImg.nodesBranchesCount, tempImg.nodesEndCount);
+                pData.distanceFromPrevCenter = tempImg.distance_NkNy;
+                pData.number = ImageDetectDataProvider.Instance.GetArrayIndexOf(tempImg) + 1;
+                processedPointsData.Add(pData);
+
+                // remove img from left images
+                leftImgs.Remove(tempImg);
+            }
+
+            int classesCount = 1;
+            // start from 2 to ignore first point (N point) and first found point by dist
+            for (int i = 2; i < processedPointsData.Count; i++) {
+                processedPointsData[i].scachokDelta =
+                    processedPointsData[i].distanceFromPrevCenter - processedPointsData[i - 1].distanceFromPrevCenter;
+            }
+
+            List<List<int>> classes = new List<List<int>>();
+            classes.Add(new List<int>());
+
+            // add classes from scachoks
+            for (int i = 0; i < processedPointsData.Count; i++) {
+                if (processedPointsData[i].scachokDelta > spectrT) {
+                    classesCount++;
+                    classes.Add(new List<int>());
+                }
+                classes[classesCount - 1].Add(processedPointsData[i].number);
+            }
+
+            spectrResult.points = processedPointsData;
+            spectrResult.classesCountResult = classesCount;
+            spectrResult.threshold = spectrT;
+
+            string pointsByClassesString = "";
+            for (int i = 0; i < classes.Count; i++) {
+                pointsByClassesString += $"\nclass {i + 1}:\t ";
+                foreach (var pointNum in classes[i]) {
+                    pointsByClassesString += pointNum + " ";
+                }
+            }
+
+            MessageBox.Show("Classes count: " + classesCount + "\n" + pointsByClassesString);
+        }
+
+        private void btnSpectrCount_Zond_Click(object sender, RoutedEventArgs e) {
+            spectrResult = null;
+            bool inputCorrect = GetSpectrInputValues();
+            if (!inputCorrect) return;
+
+            spectrResult = new SpectrResult();
+            spectrResult.selectionGroupName = "Zond";
+            List<PointData> processedPointsData = new List<PointData>();
+            ImageDetectData[] dbImgs = ImageDetectDataProvider.Instance.ImageDetectDatas;
+            List<ImageDetectData> leftImgs = new List<ImageDetectData>(dbImgs);
+
+            ImageDetectData tempImg = dbImgs[spectrStartPointNumb - 1];
+            PointData pData = new PointData(tempImg.zondBlueIntersectCount, tempImg.zondRedIntersectCount);
+            pData.number = ImageDetectDataProvider.Instance.GetArrayIndexOf(tempImg) + 1;
+            processedPointsData.Add(pData);
+            leftImgs.Remove(tempImg);
+            PointData lastCenter = new PointData(pData.x, pData.y);
+
+            while (leftImgs.Count > 0) {
+                foreach (var img in leftImgs) {
+                    img.distance_NkNy = (float)Math.Sqrt(
+                        Math.Pow(lastCenter.y - img.zondRedIntersectCount, 2) +   // y = zondRedIntersectCount
+                        Math.Pow(lastCenter.x - img.zondBlueIntersectCount, 2));  // x = zondBlueIntersectCount
+                }
+
+                // find min dist NkNy point
+                tempImg = leftImgs[0];
+                for (int i = 0; i < leftImgs.Count; i++) {
+                    if (leftImgs[i].distance_NkNy < tempImg.distance_NkNy) {
+                        tempImg = leftImgs[i];
+                    }
+                }
+
+                // calc new center point
+                int processedPointsCount = processedPointsData.Count;
+                lastCenter.x = (lastCenter.x * processedPointsCount + tempImg.zondBlueIntersectCount) / (processedPointsCount + 1);
+                lastCenter.y = (lastCenter.y * processedPointsCount + tempImg.zondRedIntersectCount) / (processedPointsCount + 1);
+
+                // add new point to processed list
+                pData = new PointData(tempImg.zondBlueIntersectCount, tempImg.zondRedIntersectCount);
+                pData.distanceFromPrevCenter = tempImg.distance_NkNy;
+                pData.number = ImageDetectDataProvider.Instance.GetArrayIndexOf(tempImg) + 1;
+                processedPointsData.Add(pData);
+
+                // remove img from left images
+                leftImgs.Remove(tempImg);
+            }
+
+            int classesCount = 1;
+            // start from 2 to ignore first point (N point) and first found point by dist
+            for (int i = 2; i < processedPointsData.Count; i++) {
+                processedPointsData[i].scachokDelta =
+                    processedPointsData[i].distanceFromPrevCenter - processedPointsData[i - 1].distanceFromPrevCenter;
+            }
+
+            List<List<int>> classes = new List<List<int>>();
+            classes.Add(new List<int>());
+
+            // add classes from scachoks
+            for (int i = 0; i < processedPointsData.Count; i++) {
+                if (processedPointsData[i].scachokDelta > spectrT) {
+                    classesCount++;
+                    classes.Add(new List<int>());
+                }
+                classes[classesCount - 1].Add(processedPointsData[i].number);
+            }
+
+            spectrResult.points = processedPointsData;
+            spectrResult.classesCountResult = classesCount;
+            spectrResult.threshold = spectrT;
+
+            string pointsByClassesString = "";
+            for (int i = 0; i < classes.Count; i++) {
+                pointsByClassesString += $"\nclass {i + 1}:\t ";
+                foreach (var pointNum in classes[i]) {
+                    pointsByClassesString += pointNum + " ";
+                }
+            }
+
+            MessageBox.Show("Classes count: " + classesCount + "\n" + pointsByClassesString);
+        }
+
+        public List<OxyPlot.DataPoint> GetSpectrGistogram() {
+            if (spectrResult == null) {
+                return null;
+            }
+
+            List<OxyPlot.DataPoint> points = new List<OxyPlot.DataPoint>();
+
+            var pointsData = spectrResult.points;
+            foreach (var point in pointsData) {
+                points.Add(new OxyPlot.DataPoint(point.number, Math.Round(point.distanceFromPrevCenter, 2, MidpointRounding.ToEven)));
+            }
+
+            return points;
+        }
+
+        private void btnSpectrExport_Click(object sender, RoutedEventArgs e) {
+            if (spectrResult == null) {
+                MessageBox.Show("Save failure - there is no spectr data!");
+            }
+
+            string fileName = "spectrResult" + spectrResult.selectionGroupName + ".xml";
+            XML_FileManager.SerializeToXML(spectrResult, fileName);
+            MessageBox.Show("Save success! File name: " + fileName);
+        }
+
+        private bool GetSpectrInputValues() {
+            try {
+                spectrT = float.Parse(txtSpectrT.Text);
+                if (spectrT < 0) throw new Exception();
+
+                spectrStartPointNumb = int.Parse(txtSpectrN.Text);
+                if (spectrStartPointNumb < 0) throw new Exception();
+            }
+            catch {
+                MessageBox.Show("Incorrect input values,\nTry again.");
+                return false;
+            }
+            return true;
+        }
+    }
+}
+
+namespace SpectrMethod {
+    [Serializable]
+    public class SpectrResult {
+        public SpectrResult() { }
+        public List<PointData> points = new List<PointData>();
+        public string selectionGroupName = "NkNy";
+        public float threshold = 0;
+        public int classesCountResult = -1;
+    }
+
+    [Serializable]
+    public class PointData {
+        public PointData() { }
+        public PointData(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int number = 0;
+
+        public static float Distance(PointData pointA, PointData pointB) {
+            return (float)Math.Sqrt(
+                        Math.Pow(pointA.x - pointB.x, 2) +
+                        Math.Pow(pointA.y - pointB.y, 2));
+        }
+
+        public float x;
+        public float y;
+
+        // if -1 then it's first point (N start)
+        public float distanceFromPrevCenter = 0f;
+        public float scachokDelta = -1f;
     }
 }

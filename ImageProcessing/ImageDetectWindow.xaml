@@ -41,12 +41,18 @@
                 <TextBox x:Name="txtZondBlue" HorizontalAlignment="Left" Margin="487,146,0,0" Text="ZBLUE" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
                 <Button x:Name="btnRefreshDB" Content="Refresh DB" HorizontalAlignment="Left" Margin="443,0,0,0" VerticalAlignment="Center" Click="btnRefreshDB_Click" Grid.Column="1"/>
                 <Button x:Name="btnDetectClassZonds" Content="Detect class Zond" HorizontalAlignment="Left" Margin="487,74,0,0" VerticalAlignment="Top" Click="btnDetectClassZonds_Click" Grid.Column="1"/>
+                <Button x:Name="btnSpectrCount_NkNy" Content="Spectr calc nkny" HorizontalAlignment="Left" Margin="371,275,0,0" VerticalAlignment="Top" Click="btnSpectrCount_NkNy_Click" Grid.Column="1" Width="93"/>
+                <Button x:Name="btnSpectrCount_Zond" Content="Spectr calc zond" HorizontalAlignment="Left" Margin="469,275,0,0" VerticalAlignment="Top" Click="btnSpectrCount_Zond_Click" Grid.Column="1" Width="99"/>
+                <Button x:Name="btnSpectrExport" Content="Spectr export data" HorizontalAlignment="Left" Margin="410,300,0,0" VerticalAlignment="Top" Click="btnSpectrExport_Click" Grid.Column="1" Width="114"/>
+                <TextBox x:Name="txtSpectrT" HorizontalAlignment="Left" Margin="371,252,0,0" Text="threshold" TextWrapping="Wrap" VerticalAlignment="Top" Width="66" Grid.Column="1"/>
+                <TextBox x:Name="txtSpectrN" HorizontalAlignment="Left" Margin="441,252,0,0" Text="start point" TextWrapping="Wrap" VerticalAlignment="Top" Width="66" Grid.Column="1"/>
             </Grid>
         </TabItem>
         <TabItem Header="ClassTable">
             <Grid Background="#FFE5E5E5">
                 <DataGrid x:Name="classTable" Margin="10,10,10,95" RowHeaderWidth="0" />
                 <Button x:Name="btnMatrixDisplay" Click="btnTableDisplay_Click" Content="Display" HorizontalAlignment="Left" Margin="10,316,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="#FF8DFF8D"/>
+                <Button x:Name="btnPointDistances" Click="btnPointDistancesDisplay_Click" Content="Spectr Dist" HorizontalAlignment="Left" Margin="85,316,0,0" VerticalAlignment="Top" Height="22" Width="70" Background="LawnGreen"/>
             </Grid>
         </TabItem>
     </TabControl>
