@@ -562,9 +562,9 @@ namespace ImageProcessing {
                 MessageBox.Show("Save failure - there is no spectr data!");
             }
 
-            string fileName = "spectrResult" + spectrResult.selectionGroupName + ".xml";
-            XML_FileManager.SerializeToXML(spectrResult, fileName);
-            MessageBox.Show("Save success! File name: " + fileName);
+            string path = "C:\\Users\\lakey\\Desktop\\spectrResult.xml";
+            XML_FileManager.SerializeToXML(spectrResult, path);
+            MessageBox.Show("Save success! File name: " + path);
         }
 
         private bool GetSpectrInputValues() {
